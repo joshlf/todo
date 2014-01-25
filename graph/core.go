@@ -26,6 +26,20 @@ func (t Tasks) MapImmutable(f func(TaskID, Task) *Task) Tasks {
 	return newT
 }
 
+// If identically-named nodes in different
+// Tasks have conflicting data, the behavior
+// of Merge is undefined.
+func (t Tasks) Merge(u ...Tasks) Tasks {
+	newT := MakeTasks()
+	u = append(u, t)
+	for _, t := range u {
+		for id, task := range t {
+			newT[id] = task
+		}
+	}
+	return newT
+}
+
 func (t Tasks) Uncompleted() Tasks {
 	return t.Filter(func(id TaskID, task *Task) bool {
 		return !task.Completed

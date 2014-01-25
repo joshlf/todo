@@ -23,6 +23,23 @@ func TestFilter(t *testing.T) {
 	}
 }
 
+func TestMerge(t *testing.T) {
+	tasks := makeTestTasks()
+	merged := tasks.Merge(tasks, tasks)
+	if !tasksEqual(tasks, merged) {
+		t.Errorf("%v and %v should be equal", tasks, merged)
+	}
+
+	tasks = makeTestTasks()
+	rightBranch := tasks.DependencyTree(TaskID("B"))
+	leftBranch := tasks.DependencyTree(TaskID("C"))
+	merged = rightBranch.Merge(leftBranch)
+	merged[TaskID("A")] = tasks[TaskID("A")]
+	if !tasksEqual(tasks, merged) {
+		t.Errorf("%v and %v should be equal", tasks, merged)
+	}
+}
+
 func TestDependencyTree(t *testing.T) {
 	tasks := makeTestTasks()
 	tasks1 := tasks.DependencyTree(TaskID("A"))
