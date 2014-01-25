@@ -27,8 +27,8 @@ func fromTodoTasks(t []todo.Task) file {
 
 type Task struct {
 	Id           string   `json:"id"`
-	Start        uint64   `json:"start"`
-	End          uint64   `json:"end"`
+	Start        int64    `json:"start"`
+	End          int64    `json:"end"`
 	Completed    bool     `json:"completed"`
 	Dependencies []string `json:"dependencies"`
 }
