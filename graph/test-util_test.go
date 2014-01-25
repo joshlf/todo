@@ -14,14 +14,32 @@ func makeTestTasks() Tasks {
 	//  / \ / \
 	// D   E   F
 	//
-	t := make(Tasks)
-	t["A"] = &Task{Id: "A", Dependencies: TaskIDSet{"B": void, "C": void}}
-	t["B"] = &Task{Id: "B", Dependencies: TaskIDSet{"D": void, "E": void}}
-	t["C"] = &Task{Id: "C", Dependencies: TaskIDSet{"E": void, "F": void}}
-	t["D"] = &Task{Id: "D", Dependencies: TaskIDSet{}}
-	t["E"] = &Task{Id: "E", Dependencies: TaskIDSet{}}
-	t["F"] = &Task{Id: "F", Dependencies: TaskIDSet{}}
-	return t
+	return Tasks{
+		"A": &Task{Id: "A", Dependencies: TaskIDSet{"B": void, "C": void}},
+		"B": &Task{Id: "B", Dependencies: TaskIDSet{"D": void, "E": void}},
+		"C": &Task{Id: "C", Dependencies: TaskIDSet{"E": void, "F": void}},
+		"D": &Task{Id: "D", Dependencies: TaskIDSet{}},
+		"E": &Task{Id: "E", Dependencies: TaskIDSet{}},
+		"F": &Task{Id: "F", Dependencies: TaskIDSet{}},
+	}
+}
+
+func makeTestTaskSlice() []Task {
+	//
+	//     A
+	//    / \
+	//   B   C
+	//  / \ / \
+	// D   E   F
+	//
+	return []Task{
+		Task{Id: "A", Dependencies: TaskIDSet{"B": void, "C": void}},
+		Task{Id: "B", Dependencies: TaskIDSet{"D": void, "E": void}},
+		Task{Id: "C", Dependencies: TaskIDSet{"E": void, "F": void}},
+		Task{Id: "D", Dependencies: TaskIDSet{}},
+		Task{Id: "E", Dependencies: TaskIDSet{}},
+		Task{Id: "F", Dependencies: TaskIDSet{}},
+	}
 }
 
 func tasksEqual(a, b Tasks) bool {
