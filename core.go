@@ -9,3 +9,42 @@ func Filter(t Tasks, f func(TaskID, *Task) bool) Tasks {
 	}
 	return u
 }
+
+
+func Uncompleted(t Tasks) Tasks {
+	return Fitler(t, func(id TaskID, task *Task) bool {
+		return !task.Completed
+	})
+}
+
+func Completed(t Tasks) Tasks {
+	return Filter(t, func(id TaskID, task *Task) bool {
+		return task.Completed
+	})
+}
+
+// id must be in t right now!
+// Returns set of tasks that depend on id
+func Dependents(t Tasks, id TaskID) {
+	return Filter(t, func(tid TaskID, task *Task) bool {
+		_, ok := (t[tid].Dependencies)[id]
+		return ok
+	})
+}
+
+// Returns true if graph is acyclic
+func Acyclic(t Tasks) bool {
+	idset := makeTaskIDSet()
+	for id, _ := range t {
+		idset.Add(id)
+	}
+	return acyclic(t, idset)
+}
+
+func acyclic(t Tasks, idset TaskIDSet) bool {
+	for id, task := range t {
+		
+	}
+
+	return true
+}
