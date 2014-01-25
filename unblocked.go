@@ -1,7 +1,7 @@
 package todo
 
-// TODO this implementation could probably be improved 
-// to be a bit more efficient. 
+// TODO this implementation could probably be improved
+// to be a bit more efficient.
 
 // Returns set of blocked tasks
 func Blocked(t Tasks) Tasks {
@@ -17,9 +17,9 @@ func Unblocked(t Tasks) Tasks {
 	})
 }
 
-// determine if a task is not blocked (has no unfinished dependencies) 
+// determine if a task is not blocked (has no unfinished dependencies)
 func unblocked(id TaskID, task *Task, t Tasks) bool {
-	for _, taskid := range task.Depends {
+	for taskid := range task.Depends {
 		if !t[taskid].Completed {
 			return false
 		}

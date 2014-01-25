@@ -11,7 +11,7 @@ type Task struct {
 	Id         TaskID
 	End, Start uint64
 	Completed  bool
-	Depends    []TaskID
+	Depends    map[TaskID]struct{}
 }
 
 type Tasks map[TaskID]*Task
