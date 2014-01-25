@@ -18,6 +18,14 @@ type Tasks map[TaskID]*Task
 
 func MakeTasks() Tasks { return make(Tasks) }
 
+func (t Tasks) Slice() []Task {
+	tasks := make([]Task, 0)
+	for _, task := range t {
+		tasks = append(tasks, task.Copy())
+	}
+	return tasks
+}
+
 func (t Tasks) Copy() Tasks {
 	return t.MapImmutable(func(id TaskID, task Task) *Task {
 		return &task

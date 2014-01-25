@@ -8,7 +8,7 @@ import (
 )
 
 func jsonFileToTasksDefault() (graph.Tasks, error) { return jsonFileToTasks(file) }
-func tasksToJSONFileDefault(t graph.Tasks) error   { return tasksToJSONFile(file, t) }
+func tasksToJSONFileDefault(t graph.Tasks) error   { return tasksToJSONFile(t, file) }
 
 func jsonFileToTasks(fname string) (graph.Tasks, error) {
 	f, err := os.Open(fname)
@@ -33,7 +33,7 @@ func jsonFileToTasks(fname string) (graph.Tasks, error) {
 }
 
 func tasksToJSONFile(t graph.Tasks, fname string) error {
-	b, err := json.Marshal(t)
+	b, err := json.Marshal(t.Slice())
 	if err != nil {
 		return err
 	}
