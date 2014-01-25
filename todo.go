@@ -1,6 +1,5 @@
-package "todo"
-
+package todo
 
 func main() {
-    
+
 }
