@@ -24,7 +24,7 @@ func (t *Task) StartTime() time.Time {
 }
 
 func (t *Task) EndTime() time.Time {
-	return time.Unix(int64(t.Start), 0)
+	return time.Unix(int64(t.End), 0)
 }
 
 func (t *Task) StartTimeSet() bool {
@@ -33,4 +33,12 @@ func (t *Task) StartTimeSet() bool {
 
 func (t *Task) EndTimeSet() bool {
 	return t.End != math.MaxUint64
+}
+
+func (t *Task) SetStartTime(tm time.Time) {
+	t.Start = uint64(tm.Unix())
+}
+
+func (t *Task) SetEndTime(tm time.Time) {
+	t.End = uint64(tm.Unix())
 }
