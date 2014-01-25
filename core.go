@@ -10,7 +10,6 @@ func Filter(t Tasks, f func(TaskID, *Task) bool) Tasks {
 	return u
 }
 
-
 func Uncompleted(t Tasks) Tasks {
 	return Fitler(t, func(id TaskID, task *Task) bool {
 		return !task.Completed
@@ -43,7 +42,7 @@ func Acyclic(t Tasks) bool {
 
 func acyclic(t Tasks, idset TaskIDSet) bool {
 	for id, task := range t {
-		
+
 	}
 
 	return true
