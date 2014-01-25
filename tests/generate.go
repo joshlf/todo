@@ -6,10 +6,9 @@ import (
 	"strconv"
 )
 
-func MakeTestTasks() todo.Tasks {
+func MakeTestTasksN(n int) todo.Tasks {
 	t := make(todo.Tasks)
 
-	n := 5
 	tt := make([]todo.TaskID, n)
 	for j, _ := range rand.Perm(n) {
 		for i, _ := range rand.Perm(n) {
@@ -26,6 +25,10 @@ func MakeTestTasks() todo.Tasks {
 	}
 
 	return t
+}
+
+func MakeTestTasks() todo.Tasks {
+	return MakeTestTasksN(5)
 }
 
 func randCol(tt []todo.TaskID, n int) map[todo.TaskID]struct{} {
