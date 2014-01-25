@@ -4,27 +4,25 @@ import (
 	"math"
 )
 
-type WeightSet map[TaskID]float64
-
 // Sets initial weights to 1
-func PageRank1(t Tasks) WeightSet {
+func PageRank1(t Tasks) WeightMap {
 	return PageRankN(t, 1.0)
 }
 
 // Sets initial weights to n for everything
-func PageRankN(t Tasks, n float64) WeightSet {
-	ws := make(WeightSet)
+func PageRankN(t Tasks, n float64) WeightMap {
+	ws := make(WeightMap)
 	for id := range t {
 		ws[id] = n
 	}
 	return PageRank(t, ws)
 }
 
-func PageRank(t Tasks, ws WeightSet) WeightSet {
+func PageRank(t Tasks, ws WeightMap) WeightMap {
 	epsilon := 0.05 // TODO this is arbitrary. Change?
 	d := 0.5        // TODO this is arbitrary. No idea what to set it to.
 	con := (1.0 - d) / float64(len(t))
-	wsnew := make(WeightSet)
+	wsnew := make(WeightMap)
 
 	dependents := make(map[TaskID]TaskIDSet)
 	for id, task := range t {
@@ -57,7 +55,7 @@ func PageRank(t Tasks, ws WeightSet) WeightSet {
 		}
 
 		ws = wsnew
-		wsnew = make(WeightSet)
+		wsnew = make(WeightMap)
 	}
 
 	return wsnew

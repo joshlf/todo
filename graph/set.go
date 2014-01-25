@@ -1,5 +1,7 @@
 package graph
 
+type WeightMap map[TaskID]float64
+
 type TaskIDSet map[TaskID]struct{}
 
 func MakeTaskIDSet() TaskIDSet { return make(TaskIDSet) }
