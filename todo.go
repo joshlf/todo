@@ -157,10 +157,16 @@ var finishCommand = &cobra.Command{
 		}
 		defer cleanupCall(m)
 		// Get the task that this ref refers to.
+		// TODO This currently does *not* implement recursive completion. 
 		ref := args[0]
 		id := graph.TaskID(ref)
-		if err = m.MarkCompleted(id, obliterate); err != nil {
-			fmt.Fprintf(os.Stderr, "Error marking ref as completed: %v\n", err)
+		if recursive {
+			err = m.MarkCompletedRecursive(id, obliterate)
+		} else {
+			err = m.MarkCompleted(id, obliterate)
+		}
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error marking ref(s) as completed: %v\n", err)
 			return
 		}
 	},
