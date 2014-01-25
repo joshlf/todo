@@ -10,7 +10,7 @@ func subgraphHelper(id TaskID, orig, new Tasks) {
 	task, ok := orig[id]
 	if ok {
 		new[id] = task
-		for depID := range task.Depends {
+		for depID := range task.Dependencies {
 			subgraphHelper(depID, orig, new)
 		}
 	}
