@@ -5,7 +5,7 @@
 			"start" : 2319823,
 			"end" : 4597979,
 			"completed" : false,
-			"dependencies" : ["3", "5"],
+			"dependencies" : ["3", "5"]
 		},
 
 		{
