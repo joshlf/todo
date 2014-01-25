@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	//	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/tests"
 	_ "github.com/joshlf13/todo/tests/impl"
@@ -10,8 +10,8 @@ import (
 
 func TestPageRank1(t *testing.T) {
 	g := tests.MakeTestTasksN(100, 100, 10).(graph.Tasks)
-	ws := graph.PageRank1(g)
-	fmt.Println(ws)
+	graph.PageRank1(g)
+	//fmt.Println(ws)
 }
 
 func BenchmarkPageRank1(b *testing.B) {
