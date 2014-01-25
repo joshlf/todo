@@ -6,15 +6,15 @@ import (
 )
 
 // Implements Middleman
-type Local struct {
+type local struct {
 	tasks graph.Tasks
 }
 
-func NewLocal(tasks graph.Tasks) Local {
-	return Local{tasks}
+func NewLocal(tasks graph.Tasks) Middleman {
+	return local{tasks}
 }
 
-func (l Local) AddTask(t graph.Task) (graph.TaskID, error) {
+func (l local) AddTask(t graph.Task) (graph.TaskID, error) {
 	for id := range t.Dependencies {
 		if _, ok := l.tasks[id]; !ok {
 			return graph.TaskID(""), newInvalidRefError(id)
@@ -28,7 +28,7 @@ func (l Local) AddTask(t graph.Task) (graph.TaskID, error) {
 	return t.Id, nil
 }
 
-func (l Local) SetStartTime(id graph.TaskID, start time.Time) error {
+func (l local) SetStartTime(id graph.TaskID, start time.Time) error {
 	task, ok := l.tasks[id]
 	if !ok {
 		return newInvalidRefError(id)
@@ -40,7 +40,7 @@ func (l Local) SetStartTime(id graph.TaskID, start time.Time) error {
 	return nil
 }
 
-func (l Local) SetEndTime(id graph.TaskID, end time.Time) error {
+func (l local) SetEndTime(id graph.TaskID, end time.Time) error {
 	task, ok := l.tasks[id]
 	if !ok {
 		return newInvalidRefError(id)
@@ -52,7 +52,7 @@ func (l Local) SetEndTime(id graph.TaskID, end time.Time) error {
 	return nil
 }
 
-func (l Local) AddDependency(from, to graph.TaskID) error {
+func (l local) AddDependency(from, to graph.TaskID) error {
 	f, ok := l.tasks[from]
 	if !ok {
 		return newInvalidRefError(from)
@@ -64,7 +64,7 @@ func (l Local) AddDependency(from, to graph.TaskID) error {
 	return nil
 }
 
-func (l Local) GetDependencies(id graph.TaskID) (graph.Tasks, error) {
+func (l local) GetDependencies(id graph.TaskID) (graph.Tasks, error) {
 	task, ok := l.tasks[id]
 	if !ok {
 		return nil, newInvalidRefError(id)
@@ -72,11 +72,11 @@ func (l Local) GetDependencies(id graph.TaskID) (graph.Tasks, error) {
 	return task.GetDependenciesTasks(l.tasks).PruneDependencies(), nil
 }
 
-func (l Local) GetUnblocked() (graph.Tasks, error) {
+func (l local) GetUnblocked() (graph.Tasks, error) {
 	return l.tasks.Unblocked().Uncompleted().PruneDependencies(), nil
 }
 
-func (l Local) GetUnblockedDependencies(id graph.TaskID) (graph.Tasks, error) {
+func (l local) GetUnblockedDependencies(id graph.TaskID) (graph.Tasks, error) {
 
 	if _, ok := l.tasks[id]; !ok {
 		return nil, newInvalidRefError(id)
@@ -84,7 +84,7 @@ func (l Local) GetUnblockedDependencies(id graph.TaskID) (graph.Tasks, error) {
 	return l.tasks.DependencyTree(id).Unblocked().Uncompleted().PruneDependencies(), nil
 }
 
-func (l Local) MarkCompleted(id graph.TaskID, obliterate bool) error {
+func (l local) MarkCompleted(id graph.TaskID, obliterate bool) error {
 	task, ok := l.tasks[id]
 	if !ok {
 		return newInvalidRefError(id)
@@ -94,7 +94,7 @@ func (l Local) MarkCompleted(id graph.TaskID, obliterate bool) error {
 }
 
 // Only mark completed if all dependencies are completed
-func (l Local) MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, error) {
+func (l local) MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, error) {
 	task, ok := l.tasks[id]
 	if !ok {
 		return false, newInvalidRefError(id)
@@ -110,7 +110,7 @@ func (l Local) MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, erro
 
 // Mark completed and force mark all dependencies
 // as completed recursively
-func (l Local) MarkCompletedRecursive(id graph.TaskID, obliterate bool) error {
+func (l local) MarkCompletedRecursive(id graph.TaskID, obliterate bool) error {
 	task, ok := l.tasks[id]
 	if !ok {
 		return newInvalidRefError(id)

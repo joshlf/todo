@@ -26,7 +26,7 @@ func IsInvalidRefError(e error) bool {
 type Middleman interface {
 	AddTask(t graph.Task) (graph.TaskID, error)
 
-	SetStartTime(id graph.TaskID, start time.Time)
+	SetStartTime(id graph.TaskID, start time.Time) error
 	SetEndTime(id graph.TaskID, end time.Time) error
 
 	AddDependency(from, to graph.TaskID) error
