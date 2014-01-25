@@ -28,7 +28,7 @@ func fromGraphTasks(t []graph.Task) file {
 
 func Marshal(t []graph.Task) ([]byte, error) {
 	f := fromGraphTasks(t)
-	return json.MarshalIndent(f, "", " ")
+	return json.MarshalIndent(f, "", "  ")
 }
 
 func Unmarshal(data []byte) ([]graph.Task, error) {
