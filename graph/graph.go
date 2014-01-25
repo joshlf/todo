@@ -44,13 +44,15 @@ func (t *Task) GetDependenciesTasks(tt Tasks) Tasks {
 // Remove all dependencies which are invalid
 // references in tt
 func (t *Task) PruneDependencies(tasks Tasks) *Task {
-	newT := t.Copy()
+	newT := *t // Deep copy
 	remove := MakeTaskIDSet()
 	for id := range t.Dependencies {
 		if _, ok := tasks[id]; !ok {
 			remove.Add(id)
 		}
 	}
+	// Duplicate so that newT's Dependencies is a different
+	// set than t's Dependencies.
 	newT.Dependencies = t.Dependencies.Sub(remove)
 	return &newT
 }
