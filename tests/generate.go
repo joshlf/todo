@@ -6,37 +6,38 @@ import (
 	"strconv"
 )
 
-func MakeTestTasksN(n int) graph.Tasks {
+func MakeTestTasksN(height, width, connectivity int) graph.Tasks {
 	t := make(graph.Tasks)
 
-	tt := make([]graph.TaskID, n)
-	for j, _ := range rand.Perm(n) {
-		for i, _ := range rand.Perm(n) {
-			task := new(graph.Task)
-			t[graph.TaskID(strconv.Itoa(i+(j*n)))] = task
-			tt[i] = graph.TaskID(strconv.Itoa(i + (j * n)))
-			task.Id = graph.TaskID(strconv.Itoa(i + (j * n)))
-			task.End = rand.Int63()
-			task.Start = rand.Int63()
-			task.Completed = (rand.Intn(2) == 0)
-			task.Dependencies = randCol(tt, n)
+	levels := make([][]*graph.Task, height)
+	for i := range levels {
+		levels[i] = make([]*graph.Task, width)
+		for j := range levels[i] {
+			task := &graph.Task{
+				Id:           graph.TaskID(strconv.FormatInt(rand.Int63(), 10)),
+				Start:        rand.Int63(),
+				End:          rand.Int63(),
+				Completed:    rand.Int()%2 == 0,
+				Dependencies: graph.MakeTaskIDSet(),
+			}
+			t[task.Id] = task
+			levels[i][j] = task
 		}
-		tt = make([]graph.TaskID, n)
 	}
 
+	for depth, level := range levels[:height-1] {
+		for _, task := range level {
+			connections := rand.Int31n(int32(connectivity))
+			for i := 0; i < int(connections); i++ {
+				row, col := rand.Int31n(int32(height-depth-1)), rand.Int31n(int32(width))
+				task.Dependencies.Add(levels[depth+int(row)+1][col].Id)
+			}
+		}
+	}
 	return t
 }
 
+// Equivalent to MakeTestTasksN(5, 5, 5)
 func MakeTestTasks() graph.Tasks {
-	return MakeTestTasksN(5)
-}
-
-func randCol(tt []graph.TaskID, n int) map[graph.TaskID]struct{} {
-	m := make(map[graph.TaskID]struct{})
-	for i := range rand.Perm(n) {
-		if rand.Intn(2) == 0 {
-			m[tt[i]] = struct{}{}
-		}
-	}
-	return m
+	return MakeTestTasksN(5, 5, 5)
 }
