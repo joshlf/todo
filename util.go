@@ -33,7 +33,7 @@ func jsonFileToTasks(fname string) (graph.Tasks, error) {
 }
 
 func tasksToJSONFile(t graph.Tasks, fname string) error {
-	b, err := json.Marshal(t.Slice())
+	b, err := json.Marshal(t.Values())
 	if err != nil {
 		return err
 	}

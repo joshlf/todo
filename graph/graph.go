@@ -20,12 +20,20 @@ type Tasks map[TaskID]*Task
 
 func MakeTasks() Tasks { return make(Tasks) }
 
-func (t Tasks) Slice() []Task {
+func (t Tasks) Values() []Task {
 	tasks := make([]Task, 0)
 	for _, task := range t {
 		tasks = append(tasks, task.Copy())
 	}
 	return tasks
+}
+
+func (t Tasks) Keys() []TaskID {
+	ids := make([]TaskID, 0)
+	for id := range t {
+		ids = append(ids, id)
+	}
+	return ids
 }
 
 func (t Tasks) Copy() Tasks {
