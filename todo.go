@@ -26,14 +26,13 @@ func parse(d string) time.Time {
 
 var file string
 
-var alias, class, runcmd, dep, start, end string
+var alias, class, runcmd, dep, start, end, port string
 var weight int
 
 var obliterate, recursive, requireDeps bool
 
 var background bool
 
-var port int
 var noRestart, readonly bool
 
 var TodoCommand = &cobra.Command{
@@ -157,6 +156,7 @@ var finishCommand = &cobra.Command{
 		}
 		defer cleanupCall(m)
 		// Get the task that this ref refers to.
+        // TODO: This currently does *not* implement recursive completion.
 		ref := args[0]
 		id := graph.TaskID(ref)
 
@@ -265,6 +265,7 @@ var serverCommand = &cobra.Command{
 		if background {
 			// TODO: daemonize
 		}
+		fmt.Printf("Starting server on port %v...", port)
 		m, err := getMiddleman(file, true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to acquire resource before starting server: %v", err)
@@ -313,7 +314,7 @@ func init() {
 
 	runCommand.Flags().BoolVarP(&background, "background", "b", false, "Fork to the background.")
 
-	serverCommand.Flags().IntVarP(&port, "port", "p", 8080, "Port the server should use.")
+	serverCommand.Flags().StringVarP(&port, "port", "p", "8080", "Port the server should use.")
 	serverCommand.Flags().BoolVarP(&noRestart, "no-restart", "n", false, "Stop the server from restarting when the JSON file changes. (Only applies when running read-only.)")
 	serverCommand.Flags().BoolVarP(&readonly, "readonly", "r", false, "Prevent anyone from modifying the todo graph over HTTP.")
 }

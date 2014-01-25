@@ -1,20 +1,24 @@
 package server
 
 import (
-	_ "fmt"
+	"fmt"
 	"github.com/emicklei/go-restful"
 	_ "github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/middleman"
+	"log"
 	_ "net"
-	_ "net/http"
+	"net/http"
 	_ "os"
 )
 
-func StartServer(todo middleman.Middleman, port int, noRestart bool) {
+func StartServer(todo middleman.Middleman, port string, noRestart bool) {
 	api := APIHandler{
 		todo: todo,
 	}
 
 	wsContainer := restful.NewContainer()
 	api.registerTasks(wsContainer)
+
+	server := &http.Server{Addr: fmt.Sprintf(":%v", port), Handler: wsContainer}
+	log.Fatal(server.ListenAndServe())
 }
