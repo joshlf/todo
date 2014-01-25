@@ -75,6 +75,18 @@ func (t *Task) PruneDependencies(tasks Tasks) *Task {
 	return &newT
 }
 
+func (t *Task) PruneDependenciesMutate(tasks Tasks) {
+	remove := MakeTaskIDSet()
+	for id := range t.Dependencies {
+		if _, ok := tasks[id]; !ok {
+			remove.Add(id)
+		}
+	}
+	for id := range remove {
+		t.Dependencies.Remove(id)
+	}
+}
+
 // Remove all dependencies which are invalid
 // references in t
 func (t Tasks) PruneDependencies() Tasks {
@@ -83,6 +95,12 @@ func (t Tasks) PruneDependencies() Tasks {
 		newT[id] = task.PruneDependencies(t)
 	}
 	return newT
+}
+
+func (t Tasks) PruneDependenciesMutate() {
+	for _, task := range t {
+		task.PruneDependenciesMutate(t)
+	}
 }
 
 // Gets the weight map associated with t

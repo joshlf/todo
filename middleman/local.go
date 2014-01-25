@@ -153,7 +153,13 @@ func (l local) MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, erro
 			return false, nil
 		}
 	}
-	task.Completed = true
+
+	if obliterate {
+		delete(l.tasks, id)
+		l.tasks.PruneDependenciesMutate()
+	} else {
+		task.Completed = true
+	}
 	return true, nil
 }
 
@@ -164,10 +170,19 @@ func (l local) MarkCompletedRecursive(id graph.TaskID, obliterate bool) error {
 	if !ok {
 		return newInvalidRefError(id)
 	}
-	task.Completed = true
-	l.tasks.DependencyTree(id).Map(func(id graph.TaskID, t *graph.Task) {
-		t.Completed = true
-	})
+
+	depTree := l.tasks.DependencyTree(id)
+	if obliterate {
+		for id = range depTree {
+			delete(l.tasks, id)
+		}
+		l.tasks.PruneDependenciesMutate()
+	} else {
+		task.Completed = true
+		depTree.Map(func(id graph.TaskID, t *graph.Task) {
+			t.Completed = true
+		})
+	}
 	return nil
 }
 
