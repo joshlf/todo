@@ -4,6 +4,7 @@ import (
 	crand "crypto/rand"
 	mrand "math/rand"
 	"strconv"
+	"time"
 )
 
 const idLenBytes = 16 // 128 bits
@@ -38,4 +39,8 @@ func fillMath(b []byte) {
 	for i := range b {
 		b[i] = byte(mrand.Uint32())
 	}
+}
+
+func init() {
+	mrand.Seed(time.Now().UnixNano())
 }
