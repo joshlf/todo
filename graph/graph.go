@@ -79,7 +79,7 @@ func (t Tasks) PruneDependencies() Tasks {
 
 // Gets the weight map associated with t
 func (t Tasks) GetWeightMap() WeightMap {
-	wm = make(WeightMap)
+	wm := make(WeightMap)
 	for id, task := range t {
 		wm[id] = task.Weight
 	}
