@@ -14,6 +14,10 @@ func NewRemote(domain string) Middleman {
 	return remote{domain}
 }
 
+func (r remote) GetTask(id graph.TaskID) (graph.Task, error) {
+	return graph.Task{}, nil
+}
+
 func (r remote) AddTask(t graph.Task) (graph.TaskID, error) {
 	return "", nil
 }

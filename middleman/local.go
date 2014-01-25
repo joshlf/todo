@@ -14,6 +14,14 @@ func NewLocal(tasks graph.Tasks) Middleman {
 	return local{tasks}
 }
 
+func (l local) GetTask(id graph.TaskID) (graph.Task, error) {
+	task, ok := l.tasks[id]
+	if !ok {
+		return graph.Task{}, newInvalidRefError(id)
+	}
+	return task.Copy(), nil
+}
+
 func (l local) AddTask(t graph.Task) (graph.TaskID, error) {
 	for id := range t.Dependencies {
 		if _, ok := l.tasks[id]; !ok {
