@@ -1,7 +1,6 @@
 package middleman
 
 import (
-	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"time"
 )

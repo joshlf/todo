@@ -6,8 +6,8 @@ import (
 
 func GraphFromTasks(t []Task) (Tasks, error) {
 	ts := make(Tasks)
-	for _, task := range t {
-		ts[task.Id] = &task
+	for i, task := range t {
+		ts[task.Id] = &t[i]
 	}
 
 	for _, task := range ts {
