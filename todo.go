@@ -151,7 +151,8 @@ var showCommand = &cobra.Command{
 	Long:  "Show all tasks that match the query. By default the command will just shows unblocked tasks, but this can be changed.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Uncompleted tasks:")
-		uncompleted := graph.Uncompleted(todoList.Tasks)
+		// TODO tl needs to be the "Tasks" object
+		uncompleted := tl.Uncompleted()
 		for i, t := range uncompleted {
 			fmt.Printf("\t%v) %v", i, t)
 		}
