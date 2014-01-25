@@ -7,7 +7,7 @@ import (
 )
 
 func TestFilter(t *testing.T) {
-	tasks := make(Tasks)
+	tasks := MakeTasks()
 	for i := 0; i < 100; i++ {
 		id := TaskID(fmt.Sprint(i))
 		tasks[id] = &Task{Id: id}
@@ -20,6 +20,22 @@ func TestFilter(t *testing.T) {
 		if n, _ := strconv.Atoi(string(id)); n%2 != 0 {
 			t.Errorf("Expected only even IDs; got %v", id)
 		}
+	}
+}
+
+func TestDependencyTree(t *testing.T) {
+	tasks := makeTestTasks()
+	tasks1 := tasks.DependencyTree(TaskID("A"))
+	if !tasksEqual(tasks, tasks1) {
+		t.Errorf("%v and %v should be equal", tasks, tasks1)
+	}
+
+	tasks2 := tasks.DependencyTree(TaskID("B"))
+	if _, ok := tasks2[TaskID("A")]; ok {
+		t.Errorf("Tasks shouldn't have task \"A\"")
+	}
+	if _, ok := tasks2[TaskID("C")]; ok {
+		t.Errorf("Tasks shouldn't have task \"A\"")
 	}
 }
 

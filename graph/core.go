@@ -49,7 +49,8 @@ func (t Tasks) Dependents(id TaskID) Tasks {
 	})
 }
 
-func (t Tasks) DependentTasks(id TaskID) Tasks {
+// Returns all dependencies recursively
+func (t Tasks) DependencyTree(id TaskID) Tasks {
 	newT := MakeTasks()
 	dependentTasks(t, id, newT)
 	return newT
@@ -58,6 +59,13 @@ func (t Tasks) DependentTasks(id TaskID) Tasks {
 func dependentTasks(t Tasks, id TaskID, newT Tasks) {
 	task, ok := t[id]
 	if ok {
+		// Don't do unnecessary work;
+		// also, don't infinitely recurse
+		// on cyclic graphs
+		if _, ok := newT[id]; ok {
+			return
+		}
+
 		newT[id] = task
 		for id = range task.Dependencies {
 			dependentTasks(t, id, newT)
