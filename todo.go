@@ -150,7 +150,19 @@ var finishCommand = &cobra.Command{
 	Short: "Finish one or more tasks in the graph.",
 	Long:  "Finish one or more tasks in the graph, and potentially their dependencies.",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		m, err := getMiddleman(file, true)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error acquiring resource to finish: %v\n", err)
+			return
+		}
+		defer cleanupCall(m)
+		// Get the task that this ref refers to.
+		ref := args[0]
+		id := graph.TaskID(ref)
+		if err = m.MarkCompleted(id, obliterate); err != nil {
+			fmt.Fprintf(os.Stderr, "Error marking ref as completed: %v\n", err)
+			return
+		}
 	},
 }
 
