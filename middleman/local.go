@@ -1,9 +1,9 @@
 package middleman
 
 import (
+	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"time"
-	"fmt"
 )
 
 // Implements Middleman
@@ -62,6 +62,28 @@ func (l local) SetEndTime(id graph.TaskID, end time.Time) error {
 	return nil
 }
 
+func (l local) SetTimes(id graph.TaskID, start, end time.Time) error {
+	task, ok := l.tasks[id]
+	if !ok {
+		return newInvalidRefError(id)
+	}
+	if start.After(end) {
+		return invalidTimeError("End time before start time")
+	}
+	task.SetStartTime(start)
+	task.SetEndTime(end)
+	return nil
+}
+
+func (l local) SetWeight(id graph.TaskID, w float64) error {
+	task, ok := l.tasks[id]
+	if !ok {
+		return newInvalidRefError(id)
+	}
+	task.Weight = w
+	return nil
+}
+
 // Get and set description
 func (l local) GetDescription(id graph.TaskID) (string, error) {
 	task, ok := l.tasks[id]
@@ -81,7 +103,6 @@ func (l local) SetDescription(id graph.TaskID, s string) error {
 	task.Description = s
 	return nil
 }
-
 
 func (l local) AddDependency(from, to graph.TaskID) error {
 	f, ok := l.tasks[from]

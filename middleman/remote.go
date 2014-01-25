@@ -30,6 +30,14 @@ func (r remote) SetEndTime(id graph.TaskID, end time.Time) error {
 	return nil
 }
 
+func (r remote) SetTimes(id graph.TaskID, start, end time.Time) error {
+	return nil
+}
+
+func (r remote) SetWeight(id graph.TaskID, w float64) error {
+	return nil
+}
+
 func (r remote) GetDescription(id graph.TaskID) (string, error) {
 	return "", nil
 }

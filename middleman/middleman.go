@@ -30,6 +30,8 @@ type Middleman interface {
 
 	SetStartTime(id graph.TaskID, start time.Time) error
 	SetEndTime(id graph.TaskID, end time.Time) error
+	SetTimes(id graph.TaskID, start, end time.Time) error
+	SetWeight(id graph.TaskID, w float64) error
 
 	AddDependency(from, to graph.TaskID) error
 
