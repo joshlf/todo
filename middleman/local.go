@@ -138,7 +138,12 @@ func (l local) MarkCompleted(id graph.TaskID, obliterate bool) error {
 	if !ok {
 		return newInvalidRefError(id)
 	}
-	task.Completed = true
+	if obliterate {
+		delete(l.tasks, id)
+		l.tasks.PruneDependenciesMutate()
+	} else {
+		task.Completed = true
+	}
 	return nil
 }
 
