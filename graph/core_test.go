@@ -37,6 +37,10 @@ func TestDependencyTree(t *testing.T) {
 	if _, ok := tasks2[TaskID("C")]; ok {
 		t.Errorf("Tasks shouldn't have task \"A\"")
 	}
+
+	// Test to see if it will infinitely recurse
+	tasks[TaskID("B")].Dependencies.Add(TaskID("A"))
+	tasks.DependencyTree(TaskID("A"))
 }
 
 func TestAcyclic(t *testing.T) {
