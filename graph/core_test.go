@@ -24,14 +24,37 @@ func TestFilter(t *testing.T) {
 }
 
 func TestAcyclic(t *testing.T) {
+	// Graph starts off with no root nodes
 	graph := makeTestTasks()
-	graph[TaskID("D")].Dependencies.Add(TaskID("E"))
-	if Acyclic(graph, TaskID("A")) {
+	graph[TaskID("D")].Dependencies.Add(TaskID("A"))
+	if Acyclic(graph) {
 		t.Errorf("Cyclic graph is marked as acyclic")
 	}
 
+	// Graph starts off with root node, but has cycle
 	graph = makeTestTasks()
-	if !Acyclic(graph, TaskID("A")) {
+	graph[TaskID("D")].Dependencies.Add(TaskID("B"))
+	if Acyclic(graph) {
+		t.Errorf("Cyclic graph is marked as acyclic")
+	}
+
+	// Graph starts off with root node, but has cycle,
+	// and that cycles is from a node to itself
+	graph = makeTestTasks()
+	graph[TaskID("D")].Dependencies.Add(TaskID("D"))
+	if Acyclic(graph) {
+		t.Errorf("Cyclic graph is marked as acyclic")
+	}
+
+	// Graph has no cycle
+	graph = makeTestTasks()
+	if !Acyclic(graph) {
 		t.Errorf("Acyclic graph is marked as cyclic")
+	}
+
+	// Empty graphs have no cycles
+	graph = make(Tasks)
+	if !Acyclic(graph) {
+		t.Errorf("Empty graph marked as cyclic")
 	}
 }
