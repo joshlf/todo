@@ -4,13 +4,13 @@ import (
 	"fmt"
 )
 
-func (d Dependencies) String() string {
-	if len(d) == 0 {
+func (t TaskIDSet) String() string {
+	if t.Len() == 0 {
 		return "[]"
 	}
 	s := "["
-	for t := range d {
-		s += string(t) + " "
+	for task := range t {
+		s += string(task) + " "
 	}
 	b := []byte(s)
 	b[len(b)-1] = ']'

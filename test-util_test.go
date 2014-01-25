@@ -4,8 +4,6 @@ import (
 	"reflect"
 )
 
-type TaskIDSet map[TaskID]struct{}
-
 var void = struct{}{}
 
 func makeTestTasks() Tasks {
@@ -17,12 +15,12 @@ func makeTestTasks() Tasks {
 	// D   E   F
 	//
 	t := make(Tasks)
-	t["A"] = &Task{Id: "A", Dependencies: Dependencies(TaskIDSet{"B": void, "C": void})}
-	t["B"] = &Task{Id: "B", Dependencies: Dependencies(TaskIDSet{"D": void, "E": void})}
-	t["C"] = &Task{Id: "C", Dependencies: Dependencies(TaskIDSet{"E": void, "F": void})}
-	t["D"] = &Task{Id: "D", Dependencies: Dependencies(TaskIDSet{})}
-	t["E"] = &Task{Id: "E", Dependencies: Dependencies(TaskIDSet{})}
-	t["F"] = &Task{Id: "F", Dependencies: Dependencies(TaskIDSet{})}
+	t["A"] = &Task{Id: "A", Dependencies: TaskIDSet{"B": void, "C": void}}
+	t["B"] = &Task{Id: "B", Dependencies: TaskIDSet{"D": void, "E": void}}
+	t["C"] = &Task{Id: "C", Dependencies: TaskIDSet{"E": void, "F": void}}
+	t["D"] = &Task{Id: "D", Dependencies: TaskIDSet{}}
+	t["E"] = &Task{Id: "E", Dependencies: TaskIDSet{}}
+	t["F"] = &Task{Id: "F", Dependencies: TaskIDSet{}}
 	return t
 }
 

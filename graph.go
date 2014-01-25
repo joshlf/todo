@@ -7,13 +7,11 @@ import (
 
 type TaskID string
 
-type Dependencies map[TaskID]struct{}
-
 type Task struct {
 	Id           TaskID
 	Start, End   uint64
 	Completed    bool
-	Dependencies Dependencies
+	Dependencies TaskIDSet
 }
 
 type Tasks map[TaskID]*Task

@@ -1,11 +1,10 @@
 package tests
 
 import (
-	"strconv"
-	"math/rand"
 	"github.com/joshlf13/todo"
+	"math/rand"
+	"strconv"
 )
-
 
 func MakeTestTasks() todo.Tasks {
 	t := make(todo.Tasks)
@@ -16,8 +15,8 @@ func MakeTestTasks() todo.Tasks {
 		for i, _ := range rand.Perm(n) {
 			task := new(todo.Task)
 			t[todo.TaskID(strconv.Itoa(i+(j*n)))] = task
-			tt[i] = todo.TaskID(strconv.Itoa(i+(j*n)))
-			task.Id = todo.TaskID(strconv.Itoa(i+(j*n)))
+			tt[i] = todo.TaskID(strconv.Itoa(i + (j * n)))
+			task.Id = todo.TaskID(strconv.Itoa(i + (j * n)))
 			task.End = uint64(rand.Int63())
 			task.Start = uint64(rand.Int63())
 			task.Completed = (rand.Intn(2) == 0)
@@ -38,5 +37,3 @@ func randCol(tt []todo.TaskID, n int) map[todo.TaskID]struct{} {
 	}
 	return m
 }
-
-
