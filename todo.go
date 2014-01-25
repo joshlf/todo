@@ -80,7 +80,7 @@ var addCommand = &cobra.Command{
 		}
 		m.SetDescription(id, args[0])
 		// m.SetRunCmd(id, runcmd)
-		// m.SetWeight(id, weight)
+		m.SetWeight(id, float64(weight))
 
 		// Point `alias' to `taskid' if needed
 		if alias != "" {
@@ -127,11 +127,11 @@ var modifyCommand = &cobra.Command{
 			}
 
 			if end != DATE_END {
-				m.SetEndTime(id, parse(end))
+				err = m.SetEndTime(id, parse(end))
 			}
 
 			if start != DATE_START {
-				m.SetStartTime(id, parse(start))
+				err = m.SetStartTime(id, parse(start))
 			}
 
 			if runcmd != "" {
@@ -139,7 +139,7 @@ var modifyCommand = &cobra.Command{
 			}
 
 			if weight != 1 {
-				// TODO: Implement
+				err = m.SetWeight(id, float64(weight))
 			}
 		}
 	},
