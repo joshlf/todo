@@ -2,6 +2,7 @@ package middleman
 
 import (
 	"github.com/joshlf13/todo/graph"
+	"time"
 )
 
 // Implements Middleman
@@ -27,6 +28,30 @@ func (l Local) AddTask(t graph.Task) (graph.TaskID, error) {
 	return t.Id, nil
 }
 
+func (l Local) SetStartTime(id graph.TaskID, start time.Time) error {
+	task, ok := l.tasks[id]
+	if !ok {
+		return newInvalidRefError(id)
+	}
+	if task.EndTime().Before(start) {
+		return invalidTimeError("Start time after end time")
+	}
+	task.SetStartTime(start)
+	return nil
+}
+
+func (l Local) SetEndTime(id graph.TaskID, end time.Time) error {
+	task, ok := l.tasks[id]
+	if !ok {
+		return newInvalidRefError(id)
+	}
+	if task.StartTime().After(end) {
+		return invalidTimeError("End time before start time")
+	}
+	task.SetEndTime(end)
+	return nil
+}
+
 func (l Local) AddDependency(from, to graph.TaskID) error {
 	f, ok := l.tasks[from]
 	if !ok {
@@ -44,7 +69,19 @@ func (l Local) GetDependencies(id graph.TaskID) (graph.Tasks, error) {
 	if !ok {
 		return nil, newInvalidRefError(id)
 	}
-	return task.GetDependenciesTasks(l.tasks).PruneDependencies().Copy(), nil
+	return task.GetDependenciesTasks(l.tasks).PruneDependencies(), nil
+}
+
+func (l Local) GetUnblocked() (graph.Tasks, error) {
+	return l.tasks.Unblocked().Uncompleted().PruneDependencies(), nil
+}
+
+func (l Local) GetUnblockedDependencies(id graph.TaskID) (graph.Tasks, error) {
+
+	if _, ok := l.tasks[id]; !ok {
+		return nil, newInvalidRefError(id)
+	}
+	return l.tasks.DependencyTree(id).Unblocked().Uncompleted().PruneDependencies(), nil
 }
 
 func (l Local) MarkCompleted(id graph.TaskID) error {
