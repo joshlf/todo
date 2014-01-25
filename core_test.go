@@ -22,3 +22,16 @@ func TestFilter(t *testing.T) {
 		}
 	}
 }
+
+func TestAcyclic(t *testing.T) {
+	graph := makeTestTasks()
+	graph[TaskID("D")].Dependencies.Add(TaskID("E"))
+	if Acyclic(graph, TaskID("A")) {
+		t.Errorf("Cyclic graph is marked as acyclic")
+	}
+
+	graph = makeTestTasks()
+	if !Acyclic(graph, TaskID("A")) {
+		t.Errorf("Acyclic graph is marked as cyclic")
+	}
+}

@@ -32,17 +32,25 @@ func Dependents(t Tasks, id TaskID) Tasks {
 }
 
 // Returns true if graph is acyclic
-func Acyclic(t Tasks) bool {
+func Acyclic(t Tasks, root TaskID) bool {
 	idset := MakeTaskIDSet()
 	for id, _ := range t {
 		idset.Add(id)
 	}
-	return acyclic(t, idset)
+	return acyclic(t, root, idset)
 }
 
-func acyclic(t Tasks, idset TaskIDSet) bool {
-	for id, task := range t {
+// Recursive helper function for Acyclic
+func acyclic(t Tasks, id TaskID, idset TaskIDSet) bool {
+	if idset.Contains(id) {
+		return false
+	}
 
+	idset.Add(id)
+	for tid := range t[id].Dependencies {
+		if !acyclic(t, tid, idset) {
+			return false
+		}
 	}
 
 	return true
