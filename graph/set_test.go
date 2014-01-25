@@ -52,6 +52,20 @@ func TestTaskIDSetEqual(t *testing.T) {
 	}
 }
 
+func TestTaskIDSetCopy(t *testing.T) {
+	s := MakeTaskIDSet()
+	s.Add("A")
+	s1 := s.Copy()
+	if !s.Equal(s1) {
+		t.Errorf("%v and %v should be equal", s, s1)
+	}
+
+	s1.Remove("A")
+	if !s.Contains("A") {
+		t.Errorf("TaskIDSet should contain \"A\"")
+	}
+}
+
 func TestTaskIDSetSub(t *testing.T) {
 	set1 := MakeTaskIDSet()
 	set1.Add("A")

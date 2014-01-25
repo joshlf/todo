@@ -32,6 +32,14 @@ func (t TaskIDSet) Equal(u TaskIDSet) bool {
 	return true
 }
 
+func (t TaskIDSet) Copy() TaskIDSet {
+	u := MakeTaskIDSet()
+	for id := range t {
+		u.Add(id)
+	}
+	return u
+}
+
 func (t TaskIDSet) GetRandom() TaskID { id, _ := t.GetRandomOK(); return id }
 
 func (t TaskIDSet) GetRandomOK() (TaskID, bool) {
