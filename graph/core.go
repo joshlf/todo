@@ -21,7 +21,7 @@ func (t Tasks) Map(f func(TaskID, *Task)) {
 func (t Tasks) MapImmutable(f func(TaskID, Task) *Task) Tasks {
 	newT := MakeTasks()
 	for id, task := range t {
-		newT[id] = f(id, *task.Copy())
+		newT[id] = f(id, task.Copy())
 	}
 	return newT
 }

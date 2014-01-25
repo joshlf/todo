@@ -24,10 +24,10 @@ func (t Tasks) Copy() Tasks {
 	})
 }
 
-func (t *Task) Copy() *Task {
+func (t *Task) Copy() Task {
 	newT := *t // Deep copy
 	newT.Dependencies = t.Dependencies.Copy()
-	return &newT
+	return newT
 }
 
 func (t *Task) GetDependenciesTasks(tt Tasks) Tasks {
