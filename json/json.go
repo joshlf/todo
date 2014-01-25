@@ -5,24 +5,14 @@ import (
 	"github.com/joshlf13/todo/graph"
 )
 
-type file struct {
-	Tasks []Task `json:"tasks"`
+func Unmarshal(data []byte) (graph.Task, error) {
+	t := graph.Task{}
+	err := json.Unmarshal(data, &t)
+	return t, err
 }
 
-func (f file) toTodoTasks() []graph.Task {
-	t := make([]graph.Task, 0)
-	for _, task := range f.Tasks {
-		t = append(t, task.toTodoTask())
-	}
-	return t
-}
-
-func fromTodoTasks(t []graph.Task) file {
-	f := file{make([]Task, 0)}
-	for _, task := range t {
-		f.Tasks = append(f.Tasks, fromTodoTask(task))
-	}
-	return f
+func Marshal(t graph.Task) ([]byte, error) {
+	return json.Marshal(FromGraphTask(t))
 }
 
 type Task struct {
@@ -33,7 +23,7 @@ type Task struct {
 	Dependencies []string `json:"dependencies"`
 }
 
-func (t Task) toTodoTask() graph.Task {
+func (t Task) ToGraphTask() graph.Task {
 	return graph.Task{
 		Id:           graph.TaskID(t.Id),
 		Start:        t.Start,
@@ -43,7 +33,7 @@ func (t Task) toTodoTask() graph.Task {
 	}
 }
 
-func fromTodoTask(t graph.Task) Task {
+func FromGraphTask(t graph.Task) Task {
 	return Task{
 		Id:           string(t.Id),
 		Start:        t.Start,
@@ -51,14 +41,6 @@ func fromTodoTask(t graph.Task) Task {
 		Completed:    t.Completed,
 		Dependencies: fromTaskIDMap(t.Dependencies),
 	}
-}
-
-func toTaskIDMap(s []string) map[graph.TaskID]struct{} {
-	m := make(map[graph.TaskID]struct{})
-	for _, id := range s {
-		m[graph.TaskID(id)] = struct{}{}
-	}
-	return m
 }
 
 func fromTaskIDMap(m map[graph.TaskID]struct{}) []string {
@@ -69,16 +51,10 @@ func fromTaskIDMap(m map[graph.TaskID]struct{}) []string {
 	return s
 }
 
-func Unmarshal(data []byte) ([]graph.Task, error) {
-	f := file{make([]Task, 0)}
-	err := json.Unmarshal(data, &f)
-	if err != nil {
-		return nil, err
+func toTaskIDMap(s []string) map[graph.TaskID]struct{} {
+	m := make(map[graph.TaskID]struct{})
+	for _, id := range s {
+		m[graph.TaskID(id)] = struct{}{}
 	}
-	return f.toTodoTasks(), nil
-}
-
-func Marshal(t []graph.Task) ([]byte, error) {
-	f := fromTodoTasks(t)
-	return json.Marshal(f)
+	return m
 }

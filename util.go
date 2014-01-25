@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/joshlf13/todo/graph"
-	"github.com/joshlf13/todo/json"
+	json "github.com/joshlf13/todo/json/file"
 	"io/ioutil"
 	"os"
 )
