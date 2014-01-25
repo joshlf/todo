@@ -88,7 +88,7 @@ func (l local) SetWeight(id graph.TaskID, w float64) error {
 func (l local) GetDescription(id graph.TaskID) (string, error) {
 	task, ok := l.tasks[id]
 	if !ok {
-		return "", fmt.Errorf("middleman: GetDescription: invalid ID.")
+		return "", newInvalidRefError(id)
 	}
 
 	return task.Description, nil
@@ -97,7 +97,7 @@ func (l local) GetDescription(id graph.TaskID) (string, error) {
 func (l local) SetDescription(id graph.TaskID, s string) error {
 	task, ok := l.tasks[id]
 	if !ok {
-		return fmt.Errorf("middleman: SetDescription: invalid ID.")
+		return newInvalidRefError(id)
 	}
 
 	task.Description = s
