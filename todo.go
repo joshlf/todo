@@ -199,7 +199,7 @@ var showCommand = &cobra.Command{
 }
 
 func pretty(indent string, t *graph.Task) string {
-	return fmt.Sprintf("%sDescription: %v\n%sStart: %v\n%sEnd: %v\n%sDependencies: %v\n", indent, "No descriptions yet", indent, t.Start, indent, t.End, indent, t.Dependencies)
+	return fmt.Sprintf("%sDescription: %v\n%sStart: %v\n%sEnd: %v\n%sDependencies: %v\n", indent, t.Description, indent, t.Start, indent, t.End, indent, t.Dependencies)
 }
 
 var editCommand = &cobra.Command{
