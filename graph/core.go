@@ -21,9 +21,7 @@ func (t Tasks) Map(f func(TaskID, *Task)) {
 func (t Tasks) MapImmutable(f func(TaskID, Task) *Task) Tasks {
 	newT := MakeTasks()
 	for id, task := range t {
-		newTask := *task // Deep copy
-		newTask.Dependencies = task.Dependencies.Copy()
-		newT[id] = f(id, newTask)
+		newT[id] = f(id, *task.Copy())
 	}
 	return newT
 }

@@ -18,6 +18,18 @@ type Tasks map[TaskID]*Task
 
 func MakeTasks() Tasks { return make(Tasks) }
 
+func (t Tasks) Copy() Tasks {
+	return t.MapImmutable(func(id TaskID, task Task) *Task {
+		return &task
+	})
+}
+
+func (t *Task) Copy() *Task {
+	newT := *t // Deep copy
+	newT.Dependencies = t.Dependencies.Copy()
+	return &newT
+}
+
 func (t *Task) GetDependenciesTasks(tt Tasks) Tasks {
 	ret := MakeTasks()
 	for id := range t.Dependencies {
