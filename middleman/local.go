@@ -89,7 +89,6 @@ func (l local) GetDescription(id graph.TaskID) (string, error) {
 	if !ok {
 		return "", newInvalidRefError(id)
 	}
-
 	return task.Description, nil
 }
 
@@ -98,7 +97,6 @@ func (l local) SetDescription(id graph.TaskID, s string) error {
 	if !ok {
 		return newInvalidRefError(id)
 	}
-
 	task.Description = s
 	return nil
 }
