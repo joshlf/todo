@@ -159,7 +159,7 @@ var finishCommand = &cobra.Command{
         // TODO: This currently does *not* implement recursive completion.
 		ref := args[0]
 		id := graph.TaskID(ref)
-
+		//fmt.Println(requireDeps)
 		if requireDeps {
 			var b bool
 			b, err = m.MarkCompletedVerify(id, obliterate)
