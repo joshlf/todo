@@ -12,7 +12,7 @@ func TestFilter(t *testing.T) {
 		id := TaskID(fmt.Sprint(i))
 		tasks[id] = &Task{Id: id}
 	}
-	tasks = Filter(tasks, func(id TaskID, t *Task) bool {
+	tasks = tasks.Filter(func(id TaskID, t *Task) bool {
 		n, _ := strconv.Atoi(string(id))
 		return n%2 == 0
 	})
@@ -27,14 +27,14 @@ func TestAcyclic(t *testing.T) {
 	// Graph starts off with no root nodes
 	graph := makeTestTasks()
 	graph[TaskID("D")].Dependencies.Add(TaskID("A"))
-	if Acyclic(graph) {
+	if graph.Acyclic() {
 		t.Errorf("Cyclic graph is marked as acyclic")
 	}
 
 	// Graph starts off with root node, but has cycle
 	graph = makeTestTasks()
 	graph[TaskID("D")].Dependencies.Add(TaskID("B"))
-	if Acyclic(graph) {
+	if graph.Acyclic() {
 		t.Errorf("Cyclic graph is marked as acyclic")
 	}
 
@@ -42,19 +42,19 @@ func TestAcyclic(t *testing.T) {
 	// and that cycles is from a node to itself
 	graph = makeTestTasks()
 	graph[TaskID("D")].Dependencies.Add(TaskID("D"))
-	if Acyclic(graph) {
+	if graph.Acyclic() {
 		t.Errorf("Cyclic graph is marked as acyclic")
 	}
 
 	// Graph has no cycle
 	graph = makeTestTasks()
-	if !Acyclic(graph) {
+	if !graph.Acyclic() {
 		t.Errorf("Acyclic graph is marked as cyclic")
 	}
 
 	// Empty graphs have no cycles
 	graph = make(Tasks)
-	if !Acyclic(graph) {
+	if !graph.Acyclic() {
 		t.Errorf("Empty graph marked as cyclic")
 	}
 }

@@ -1,7 +1,7 @@
 package graph
 
-func Filter(t Tasks, f func(TaskID, *Task) bool) Tasks {
-	u := make(Tasks)
+func (t Tasks) Filter(f func(TaskID, *Task) bool) Tasks {
+	u := MakeTasks()
 	for id, task := range t {
 		if f(id, task) {
 			u[id] = task
@@ -10,29 +10,29 @@ func Filter(t Tasks, f func(TaskID, *Task) bool) Tasks {
 	return u
 }
 
-func Uncompleted(t Tasks) Tasks {
-	return Filter(t, func(id TaskID, task *Task) bool {
+func (t Tasks) Uncompleted() Tasks {
+	return t.Filter(func(id TaskID, task *Task) bool {
 		return !task.Completed
 	})
 }
 
-func Completed(t Tasks) Tasks {
-	return Filter(t, func(id TaskID, task *Task) bool {
+func (t Tasks) Completed() Tasks {
+	return t.Filter(func(id TaskID, task *Task) bool {
 		return task.Completed
 	})
 }
 
 // id must be in t right now!
 // Returns set of tasks that depend on id
-func Dependents(t Tasks, id TaskID) Tasks {
-	return Filter(t, func(tid TaskID, task *Task) bool {
+func (t Tasks) Dependents(id TaskID) Tasks {
+	return t.Filter(func(tid TaskID, task *Task) bool {
 		_, ok := t[tid].Dependencies[id]
 		return ok
 	})
 }
 
 // Returns true if graph is acyclic
-func Acyclic(t Tasks) bool {
+func (t Tasks) Acyclic() bool {
 	_, ok := TopoSort(t)
 	return ok
 }

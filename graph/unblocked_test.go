@@ -8,7 +8,7 @@ func TestBlocked(t *testing.T) {
 	g := makeTestTasks()
 	g["D"].Completed = true
 	g["E"].Completed = true
-	uset := Blocked(g)
+	uset := g.Blocked()
 	_, a := uset["A"]
 	_, b := uset["B"]
 	_, c := uset["C"]
@@ -39,7 +39,7 @@ func TestUnblocked(t *testing.T) {
 	g := makeTestTasks()
 	g["D"].Completed = true
 	g["E"].Completed = true
-	uset := Unblocked(g)
+	uset := g.Unblocked()
 	_, a := uset["A"]
 	_, b := uset["B"]
 	_, c := uset["C"]

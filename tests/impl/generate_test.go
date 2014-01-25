@@ -2,7 +2,6 @@ package impl
 
 import (
 	"fmt"
-	"github.com/joshlf13/todo/graph"
 	"math/rand"
 	"testing"
 )
@@ -23,7 +22,7 @@ func TestGenerate(t *testing.T) {
 	rand.Seed(21469) // Make the test deterministic
 	for i := 1; i < 10; i++ {
 		tasks := MakeTestTasksN(i, i, i)
-		if !graph.Acyclic(tasks) {
+		if !tasks.Acyclic() {
 			t.Errorf("Generated cyclic graph: %v", tasks)
 		}
 	}

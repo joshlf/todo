@@ -4,15 +4,15 @@ package graph
 // to be a bit more efficient.
 
 // Returns set of blocked tasks
-func Blocked(t Tasks) Tasks {
-	return Filter(t, func(id TaskID, task *Task) bool {
+func (t Tasks) Blocked() Tasks {
+	return t.Filter(func(id TaskID, task *Task) bool {
 		return !unblocked(id, task, t)
 	})
 }
 
 // Returns set of unblocked tests
-func Unblocked(t Tasks) Tasks {
-	return Filter(t, func(id TaskID, task *Task) bool {
+func (t Tasks) Unblocked() Tasks {
+	return t.Filter(func(id TaskID, task *Task) bool {
 		return unblocked(id, task, t)
 	})
 }
