@@ -36,7 +36,7 @@ var addCommand = &cobra.Command{
 	Short: "Add a new task to the graph.",
 	Long:  "Add a new task to the graph, specifying its properties (aliases, classes, times, etc.).",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		fmt.Println("something (ran add)")
 	},
 }
 
@@ -84,7 +84,7 @@ var editCommand = &cobra.Command{
 	Short: "Edit one or more tasks' descriptions.",
 	Long:  "Edit one or more tasks' descriptions.",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		fmt.Println(graph.EditString("Some String"))
 	},
 }
 

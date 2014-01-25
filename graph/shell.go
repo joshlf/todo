@@ -27,7 +27,11 @@ func EditString(s string) string {
 	fname := f.Name()
 
 	// call editor
-	if err = exec.Command(GetEditor(), fname).Run(); err != nil {
+	cmd := exec.Command(GetEditor(), fname)
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	if err = cmd.Run(); err != nil {
 		panic(fmt.Sprintf("todo: EditString: failed to launch editor: %v", err))
 		// TODO change this later
 	}
