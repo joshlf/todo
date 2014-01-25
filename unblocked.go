@@ -19,7 +19,7 @@ func Unblocked(t Tasks) Tasks {
 
 // determine if a task is not blocked (has no unfinished dependencies)
 func unblocked(id TaskID, task *Task, t Tasks) bool {
-	for taskid := range task.Depends {
+	for taskid := range task.Dependencies {
 		if !t[taskid].Completed {
 			return false
 		}
