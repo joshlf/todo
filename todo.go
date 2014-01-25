@@ -4,16 +4,32 @@ import (
 	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/server"
+	"github.com/joshlf13/todo/shell"
 	"github.com/spf13/cobra"
-	"math"
+	"os"
+    "time"
 )
+
+const (
+    DATE_END = "00:00:00 1/1/2040"
+    DATE_START = "00:00:00 1/1/1970"
+)
+
+func parse(d string) time.Time {
+    t, err := time.Parse("15:04:05 1/2/2006", d)
+    if (err != nil) {
+        panic("Fix me!")
+    } else {
+        return t
+    }
+}
 
 var todoList graph.TodoList
 
 var file string
 
-var alias, class, runcmd, dep string
-var weight, start, end int
+var alias, class, runcmd, dep, start, end string
+var weight int
 
 var obliterate, recursive, requireDeps bool
 
@@ -37,6 +53,25 @@ var addCommand = &cobra.Command{
 	Long:  "Add a new task to the graph, specifying its properties (aliases, classes, times, etc.).",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("something (ran add)")
+		deps := []string{dep}
+		// Create task, set attributes and then add deps
+		t := todoList.NewTask()
+		t.SetDescription(args[0])
+		t.SetRunCmd(runcmd)
+		t.SetStartTime(parse(start))
+		t.SetEndTime(parse(end))
+		t.SetWeight(weight)
+		t.AddDependencies(deps)
+
+		// Point `alias' to `taskid' if needed
+		if alias != "" {
+			// TODO: Implement aliases
+		}
+
+		// Add task to `class' if needed
+		if class != "" {
+			// TODO: Implement classes
+		}
 	},
 }
 
@@ -45,6 +80,34 @@ var modifyCommand = &cobra.Command{
 	Short: "Modify a new task in the graph.",
 	Long:  "Modify a new task in the graph, changing its properties (aliases, classes, times, etc.).",
 	Run: func(cmd *cobra.Command, args []string) {
+		// Point `alias' to `taskid'
+		if alias != "" {
+
+		}
+
+		if class != "" {
+
+		}
+
+		if dep != "" {
+
+		}
+
+		if end != DATE_END {
+
+		}
+
+		if runcmd != "" {
+
+		}
+
+		if start != DATE_START {
+
+		}
+
+		if weight != 1 {
+
+		}
 
 	},
 }
@@ -63,7 +126,8 @@ var runCommand = &cobra.Command{
 	Short: "Run a task's command.",
 	Long:  "Run a task's command. Can be run forked to run in the background if desired.",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		t, _ := todoList.ResolveSingle(args[0])
+		shell.RunCommand(t.GetTaskID(), t.GetRunCmd(), background)
 	},
 }
 
@@ -72,9 +136,10 @@ var showCommand = &cobra.Command{
 	Short: "Show all unblocked tasks.",
 	Long:  "Show all tasks that match the query. By default the command will just shows unblocked tasks, but this can be changed.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("About to show")
-		for _, arg := range args {
-			fmt.Printf("Showing: %s\n", arg)
+		fmt.Println("Uncompleted tasks:")
+		uncompleted := graph.Uncompleted(todoList.Tasks)
+		for i, t := range uncompleted {
+			fmt.Printf("\t%v) %v", i, t)
 		}
 	},
 }
@@ -84,7 +149,17 @@ var editCommand = &cobra.Command{
 	Short: "Edit one or more tasks' descriptions.",
 	Long:  "Edit one or more tasks' descriptions.",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(graph.EditString("Some String"))
+		// Get the task that this ref refers to.
+		t, err := todoList.ResolveSingle(args[0])
+		// Check for issue (e.g., ref was class)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error editing description: %v", err)
+		} else {
+			// Let user edit string
+			tmp := shell.EditString(t.GetDescription())
+			// Shove back updated string
+			t.SetDescription(tmp)
+		}
 	},
 }
 
@@ -125,8 +200,8 @@ func init() {
 		cmd.Flags().StringVarP(&runcmd, "run", "r", "", "Run a command when doing this task.")
 		cmd.Flags().StringVarP(&dep, "dep", "d", "", "Add a dependency for this task.")
 		cmd.Flags().IntVarP(&weight, "weight", "w", 1, "Assign this task a weight.")
-		cmd.Flags().IntVarP(&start, "start", "s", 0, "Start time for this task.")
-		cmd.Flags().IntVarP(&end, "end", "e", math.MaxInt64, "End time for this task.")
+		cmd.Flags().StringVarP(&start, "start", "s", DATE_START, "Start time for this task.")
+		cmd.Flags().StringVarP(&end, "end", "e", DATE_END, "End time for this task.")
 	}
 
 	finishCommand.Flags().BoolVarP(&obliterate, "obliterate", "o", false, "Delete this task instead of just marking it completed.")
