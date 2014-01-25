@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/server"
-	_ "github.com/joshlf13/todo/shell"
+	"github.com/joshlf13/todo/shell"
 	"github.com/spf13/cobra"
 	"os"
 	"time"
@@ -216,12 +216,19 @@ var editCommand = &cobra.Command{
 		// Get the task that this ref refers to.
 		ref := args[0]
 		id := graph.TaskID(ref) // When we have aliases and classes, resolve here.
-		fmt.Printf("I bet you wish you were editing %v, dontcha?", id)
 		// Let user edit string
-		// Uncomment below once we have descriptions
-		// tmp := shell.EditString(m.GetDescription(id))
+		var s string
+		s, err = m.GetDescription(id)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error editing description for %v: %v", id, err)
+			return
+		}
+		tmp := shell.EditString(s)
 		// Shove back updated string
-		// m.SetDescription(id, tmp)
+		if err = m.SetDescription(id, tmp); err != nil {
+			fmt.Fprintf(os.Stderr, "Error editing description for %v: %v", id, err)
+			return
+		}
 	},
 }
 

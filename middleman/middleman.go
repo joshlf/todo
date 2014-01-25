@@ -33,6 +33,10 @@ type Middleman interface {
 
 	AddDependency(from, to graph.TaskID) error
 
+	// Get and set descriptions
+	GetDescription(graph.TaskID) (string, error)
+	SetDescription(graph.TaskID, string) error
+
 	// Get all dependencies of id
 	GetDependencies(id graph.TaskID) (graph.Tasks, error)
 

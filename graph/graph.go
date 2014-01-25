@@ -12,6 +12,7 @@ type Task struct {
 	Start, End   int64
 	Completed    bool
 	Dependencies TaskIDSet
+	Description  string
 }
 
 type Tasks map[TaskID]*Task

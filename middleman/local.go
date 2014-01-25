@@ -3,6 +3,7 @@ package middleman
 import (
 	"github.com/joshlf13/todo/graph"
 	"time"
+	"fmt"
 )
 
 // Implements Middleman
@@ -60,6 +61,27 @@ func (l local) SetEndTime(id graph.TaskID, end time.Time) error {
 	task.SetEndTime(end)
 	return nil
 }
+
+// Get and set description
+func (l local) GetDescription(id graph.TaskID) (string, error) {
+	task, ok := l.tasks[id]
+	if !ok {
+		return "", fmt.Errorf("middleman: GetDescription: invalid ID.")
+	}
+
+	return task.Description, nil
+}
+
+func (l local) SetDescription(id graph.TaskID, s string) error {
+	task, ok := l.tasks[id]
+	if !ok {
+		return fmt.Errorf("middleman: SetDescription: invalid ID.")
+	}
+
+	task.Description = s
+	return nil
+}
+
 
 func (l local) AddDependency(from, to graph.TaskID) error {
 	f, ok := l.tasks[from]
