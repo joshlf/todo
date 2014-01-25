@@ -60,3 +60,7 @@ func (r remote) MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, err
 func (r remote) MarkCompletedRecursive(id graph.TaskID, obliterate bool) error {
 	return nil
 }
+
+func (r remote) Close() error {
+	return nil
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/middleman"
 )
 
@@ -12,7 +13,9 @@ func getMiddleman(resource string, file bool) (middleman.Middleman, error) {
 		if err != nil {
 			return nil, err
 		}
-		return middleman.NewLocal(t), nil
+		return middleman.NewLocal(t, func(t graph.Tasks) error {
+			return tasksToJSONFile(t, resource)
+		}), nil
 	} else {
 		return middleman.NewRemote(resource), nil
 	}

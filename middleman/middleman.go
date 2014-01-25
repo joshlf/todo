@@ -45,4 +45,6 @@ type Middleman interface {
 	MarkCompleted(id graph.TaskID, obliterate bool) error
 	MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, error)
 	MarkCompletedRecursive(id graph.TaskID, obliterate bool) error
+
+	Close() error
 }

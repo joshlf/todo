@@ -8,10 +8,11 @@ import (
 // Implements Middleman
 type local struct {
 	tasks graph.Tasks
+	close func(graph.Tasks) error
 }
 
-func NewLocal(tasks graph.Tasks) Middleman {
-	return local{tasks}
+func NewLocal(tasks graph.Tasks, close func(graph.Tasks) error) Middleman {
+	return local{tasks, close}
 }
 
 func (l local) GetTask(id graph.TaskID) (graph.Task, error) {
@@ -128,4 +129,8 @@ func (l local) MarkCompletedRecursive(id graph.TaskID, obliterate bool) error {
 		t.Completed = true
 	})
 	return nil
+}
+
+func (l local) Close() error {
+	return l.close(l.tasks)
 }
