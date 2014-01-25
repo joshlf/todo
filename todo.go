@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/joshlf13/todo/graph"
+	"github.com/joshlf13/todo/server"
 	"github.com/spf13/cobra"
 	"math"
-    "github.com/joshlf13/todo/server"
-    "github.com/joshlf13/todo/graph"
 )
 
 var todoList graph.TodoList
@@ -93,7 +93,7 @@ var serverCommand = &cobra.Command{
 	Short: "Start a todo server.",
 	Long:  "Start a todo server that provides a web navigable interface and an API to allow you to view and potentially modify your tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
-        server.StartServer(todoList, port, noRestart)
+		server.StartServer(todoList, port, noRestart)
 	},
 }
 
