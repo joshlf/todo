@@ -56,30 +56,19 @@ var addCommand = &cobra.Command{
 			return
 		}
 		defer cleanupCall(m)
-		t := graph.Task{}
-		id, err := m.AddTask(t)
+		t := graph.MakeTask()
+		t.SetStartTime(parse(start))
+		t.SetEndTime(parse(end))
+		t.Weight = float64(weight)
+		t.Description = args[0]
+		if dep != "" {
+			t.Dependencies.Add(graph.TaskID(dep))
+		}
+		_, err = m.AddTask(t)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to add new task to resource: %v", err)
 			return
 		}
-		if dep != "" {
-			m.AddDependency(id, graph.TaskID(dep))
-		}
-		etime := parse(end)
-		err = m.SetEndTime(id, etime)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to set time to %v: %v\n", etime, err)
-			return
-		}
-		stime := parse(start)
-		err = m.SetStartTime(id, stime)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Unable to set start time to %v: %v\n", stime, err)
-			return
-		}
-		m.SetDescription(id, args[0])
-		// m.SetRunCmd(id, runcmd)
-		m.SetWeight(id, float64(weight))
 
 		// Point `alias' to `taskid' if needed
 		if alias != "" {
@@ -156,7 +145,7 @@ var finishCommand = &cobra.Command{
 		}
 		defer cleanupCall(m)
 		// Get the task that this ref refers to.
-        // TODO: This currently does *not* implement recursive completion.
+		// TODO: This currently does *not* implement recursive completion.
 		ref := args[0]
 		id := graph.TaskID(ref)
 		//fmt.Println(requireDeps)

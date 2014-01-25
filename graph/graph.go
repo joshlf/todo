@@ -16,6 +16,8 @@ type Task struct {
 	Weight       float64
 }
 
+func MakeTask() Task { return Task{Dependencies: MakeTaskIDSet()} }
+
 type Tasks map[TaskID]*Task
 
 func MakeTasks() Tasks { return make(Tasks) }

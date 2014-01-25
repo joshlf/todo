@@ -21,6 +21,8 @@ type Task struct {
 	End          int64    `json:"end"`
 	Completed    bool     `json:"completed"`
 	Dependencies []string `json:"dependencies"`
+	Description  string   `json:"description"`
+	Weight       float64  `json:"weight"`
 }
 
 func (t Task) ToGraphTask() graph.Task {
@@ -30,6 +32,8 @@ func (t Task) ToGraphTask() graph.Task {
 		End:          t.End,
 		Completed:    t.Completed,
 		Dependencies: toTaskIDMap(t.Dependencies),
+		Description:  t.Description,
+		Weight:       t.Weight,
 	}
 }
 
@@ -40,6 +44,8 @@ func FromGraphTask(t graph.Task) Task {
 		End:          t.End,
 		Completed:    t.Completed,
 		Dependencies: fromTaskIDMap(t.Dependencies),
+		Description:  t.Description,
+		Weight:       t.Weight,
 	}
 }
 
