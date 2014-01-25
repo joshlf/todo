@@ -19,7 +19,7 @@ func GraphFromTasks(t []Task) (Tasks, error) {
 		}
 	}
 
-	if !Acyclic(ts) {
+	if !ts.Acyclic() {
 		return nil, fmt.Errorf("todo: GraphFromTasks: graph has a cycle!")
 	}
 
