@@ -13,6 +13,7 @@ type Task struct {
 	Completed    bool
 	Dependencies TaskIDSet
 	Description  string
+	Weight       float64
 }
 
 type Tasks map[TaskID]*Task
@@ -74,6 +75,15 @@ func (t Tasks) PruneDependencies() Tasks {
 		newT[id] = task.PruneDependencies(t)
 	}
 	return newT
+}
+
+// Gets the weight map associated with t
+func (t Tasks) GetWeightMap() WeightMap {
+	wm = make(WeightMap)
+	for id, task := range t {
+		wm[id] = task.Weight
+	}
+	return wm
 }
 
 func (t *Task) StartTime() time.Time {
