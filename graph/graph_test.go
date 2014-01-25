@@ -6,6 +6,45 @@ import (
 	"testing"
 )
 
+func TestTaskPruneDependencies(t *testing.T) {
+	tasks := makeTestTasks()
+	delete(tasks, TaskID("B"))
+	newA := tasks[TaskID("A")].PruneDependencies(tasks)
+	expectedDependencies := MakeTaskIDSet()
+
+	// Make sure that dependencies are properly pruned
+	expectedDependencies.Add(TaskID("C"))
+	if !newA.Dependencies.Equal(expectedDependencies) {
+		t.Errorf("Expected dependencies %v; got %v", expectedDependencies, newA.Dependencies)
+	}
+
+	// Make sure that the old graph isn't affected
+	expectedDependencies.Add(TaskID("B"))
+	if !tasks[TaskID("A")].Dependencies.Equal(expectedDependencies) {
+		t.Errorf("Expected dependencies %v; got %v", expectedDependencies, newA.Dependencies)
+	}
+}
+
+func TestTasksPruneDependencies(t *testing.T) {
+	tasks := makeTestTasks()
+	delete(tasks, TaskID("B"))
+	newTasks := tasks.PruneDependencies()
+	newA := newTasks[TaskID("A")]
+	expectedDependencies := MakeTaskIDSet()
+
+	// Make sure that dependencies are properly pruned
+	expectedDependencies.Add(TaskID("C"))
+	if !newA.Dependencies.Equal(expectedDependencies) {
+		t.Errorf("Expected dependencies %v; got %v", expectedDependencies, newA.Dependencies)
+	}
+
+	// Make sure that the old graph isn't affected
+	expectedDependencies.Add(TaskID("B"))
+	if !tasks[TaskID("A")].Dependencies.Equal(expectedDependencies) {
+		t.Errorf("Expected dependencies %v; got %v", expectedDependencies, newA.Dependencies)
+	}
+}
+
 func TestTimeSet(t *testing.T) {
 	task := Task{}
 	if task.StartTimeSet() {

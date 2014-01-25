@@ -8,6 +8,30 @@ func (t TaskIDSet) Add(id TaskID) { t[id] = struct{}{} }
 
 func (t TaskIDSet) Remove(id TaskID) { delete(t, id) }
 
+func (t TaskIDSet) Sub(u TaskIDSet) TaskIDSet {
+	v := MakeTaskIDSet()
+	for id := range t {
+		if !u.Contains(id) {
+			v.Add(id)
+		}
+	}
+	return v
+}
+
+func (t TaskIDSet) Equal(u TaskIDSet) bool {
+	for id := range t {
+		if !u.Contains(id) {
+			return false
+		}
+	}
+	for id := range u {
+		if !t.Contains(id) {
+			return false
+		}
+	}
+	return true
+}
+
 func (t TaskIDSet) GetRandom() TaskID { id, _ := t.GetRandomOK(); return id }
 
 func (t TaskIDSet) GetRandomOK() (TaskID, bool) {

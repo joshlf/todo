@@ -26,7 +26,7 @@ func Completed(t Tasks) Tasks {
 // Returns set of tasks that depend on id
 func Dependents(t Tasks, id TaskID) Tasks {
 	return Filter(t, func(tid TaskID, task *Task) bool {
-		_, ok := (t[tid].Dependencies)[id]
+		_, ok := t[tid].Dependencies[id]
 		return ok
 	})
 }

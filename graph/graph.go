@@ -16,30 +16,41 @@ type Task struct {
 
 type Tasks map[TaskID]*Task
 
-type TodoList struct {
-	Tasks
+func MakeTasks() Tasks { return make(Tasks) }
+
+func (t *Task) GetDependenciesTasks(tt Tasks) Tasks {
+	ret := MakeTasks()
+	for id := range t.Dependencies {
+		task, ok := tt[id]
+		if ok {
+			ret[id] = task
+		}
+	}
+	return ret
 }
 
-func (l TodoList) ResolveAll(ref string) ([]Task, error) {
-	ts := []Task{}
-	// TODO: Implement
-	return ts, nil
+// Remove all dependencies which are invalid
+// references in tt
+func (t *Task) PruneDependencies(tasks Tasks) *Task {
+	newT := *t // Deep copy
+	remove := MakeTaskIDSet()
+	for id := range t.Dependencies {
+		if _, ok := tasks[id]; !ok {
+			remove.Add(id)
+		}
+	}
+	newT.Dependencies = t.Dependencies.Sub(remove)
+	return &newT
 }
 
-func (l TodoList) ResolveSingle(ref string) (Task, error) {
-	var t Task
-	// TODO: Implement
-	return t, nil
-}
-
-func (l TodoList) NewTask() Task {
-	var t Task
-	// TODO: place into Dependencies
-	return t
-}
-
-func (t *Task) GetTaskID() string {
-	return ""
+// Remove all dependencies which are invalid
+// references in t
+func (t Tasks) PruneDependencies() Tasks {
+	newT := MakeTasks()
+	for id, task := range t {
+		newT[id] = task.PruneDependencies(t)
+	}
+	return newT
 }
 
 func (t *Task) StartTime() time.Time {
@@ -64,30 +75,4 @@ func (t *Task) SetStartTime(tm time.Time) {
 
 func (t *Task) SetEndTime(tm time.Time) {
 	t.End = tm.Unix()
-}
-
-func (t *Task) GetDescription() string {
-	// TODO: Implement description
-	return ""
-}
-
-func (t *Task) SetDescription(desc string) {
-	// TODO: Implement description
-}
-
-func (t *Task) SetWeight(w int) {
-	// TODO: Implement weights
-}
-
-func (t *Task) GetRunCmd() string {
-	// TODO: Implement run command
-	return ""
-}
-
-func (t *Task) SetRunCmd(cmd string) {
-	// TODO: Implement run command
-}
-
-func (t *Task) AddDependencies(deps []string) {
-	// TODO: Do this.
 }
