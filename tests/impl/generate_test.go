@@ -1,4 +1,4 @@
-package tests
+package impl
 
 import (
 	"fmt"

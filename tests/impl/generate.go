@@ -1,7 +1,8 @@
-package tests
+package impl
 
 import (
 	"github.com/joshlf13/todo/graph"
+	"github.com/joshlf13/todo/tests"
 	"math/rand"
 	"strconv"
 )
@@ -40,4 +41,9 @@ func MakeTestTasksN(height, width, connectivity int) graph.Tasks {
 // Equivalent to MakeTestTasksN(5, 5, 5)
 func MakeTestTasks() graph.Tasks {
 	return MakeTestTasksN(5, 5, 5)
+}
+
+func init() {
+	tests.MakeTestTasksN = func(h, w, c int) interface{} { return MakeTestTasksN(h, w, c) }
+	tests.MakeTestTasks = func() interface{} { return MakeTestTasks() }
 }
