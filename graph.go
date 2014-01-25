@@ -10,6 +10,7 @@ type TaskID string
 type Task struct {
 	Id         TaskID
 	End, Start uint64
+	Completed  bool
 	Depends    []TaskID
 }
 
