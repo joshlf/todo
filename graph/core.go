@@ -1,4 +1,4 @@
-package todo
+package graph
 
 func Filter(t Tasks, f func(TaskID, *Task) bool) Tasks {
 	u := make(Tasks)

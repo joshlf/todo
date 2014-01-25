@@ -1,12 +1,27 @@
-package todo
+package main
 
 import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"math"
+    "github.com/joshlf13/todo/server"
+    "github.com/joshlf13/todo/graph"
 )
 
-var File string
+var todoList graph.TodoList
+
+var file string
+
+var alias, class, runcmd, dep string
+var weight, start, end int
+
+var obliterate, recursive, requireDeps bool
+
+var background bool
+
+var port int
+var noRestart, readonly bool
+
 var TodoCommand = &cobra.Command{
 	Use:   "todo",
 	Short: "A todo list manager with some more interesting features.",
@@ -78,7 +93,7 @@ var serverCommand = &cobra.Command{
 	Short: "Start a todo server.",
 	Long:  "Start a todo server that provides a web navigable interface and an API to allow you to view and potentially modify your tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
-
+        server.StartServer(todoList, port, noRestart)
 	},
 }
 
@@ -92,7 +107,7 @@ var optionCommand = &cobra.Command{
 }
 
 func main() {
-	TodoCommand.Flags().StringVarP(&File, "file", "f", "todo.json", "JSON file to read graph from.")
+	TodoCommand.Flags().StringVarP(&file, "file", "f", "todo.json", "JSON file to read graph from.")
 
 	// Task commands
 	TodoCommand.AddCommand(addCommand, modifyCommand, finishCommand, runCommand, showCommand, editCommand)
@@ -102,16 +117,6 @@ func main() {
 
 	TodoCommand.Execute()
 }
-
-var alias, class, runcmd, dep string
-var weight, start, end int
-
-var obliterate, recursive, requireDeps bool
-
-var background bool
-
-var port int
-var noRestart, readonly bool
 
 func init() {
 	for _, cmd := range []*cobra.Command{addCommand, modifyCommand} {

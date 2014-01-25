@@ -1,4 +1,4 @@
-package todo
+package graph
 
 func Subgraph(id TaskID, t Tasks) Tasks {
 	ret := make(Tasks)

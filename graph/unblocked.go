@@ -1,4 +1,4 @@
-package todo
+package graph
 
 // TODO this implementation could probably be improved
 // to be a bit more efficient.
