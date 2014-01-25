@@ -44,7 +44,7 @@ func (t *Task) GetDependenciesTasks(tt Tasks) Tasks {
 // Remove all dependencies which are invalid
 // references in tt
 func (t *Task) PruneDependencies(tasks Tasks) *Task {
-	newT := *t // Deep copy
+	newT := t.Copy()
 	remove := MakeTaskIDSet()
 	for id := range t.Dependencies {
 		if _, ok := tasks[id]; !ok {
@@ -88,4 +88,3 @@ func (t *Task) SetStartTime(tm time.Time) {
 func (t *Task) SetEndTime(tm time.Time) {
 	t.End = tm.Unix()
 }
-
