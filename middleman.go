@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/middleman"
+	"os"
 )
 
 // file == true => resource is a filepath
@@ -18,5 +20,15 @@ func getMiddleman(resource string, file bool) (middleman.Middleman, error) {
 		}), nil
 	} else {
 		return middleman.NewRemote(resource), nil
+	}
+}
+
+func cleanupCall(m middleman.Middleman) {
+	if m == nil {
+		return
+	}
+	err := m.Close()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Unable to close resource cleanly: %v\n", err)
 	}
 }

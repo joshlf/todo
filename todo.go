@@ -56,6 +56,7 @@ var addCommand = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Unable to acquire resource to add new task: %v", err)
 			return
 		}
+		defer cleanupCall(m)
 		t := graph.Task{}
 		id, err := m.AddTask(t)
 		if err != nil {
@@ -65,8 +66,18 @@ var addCommand = &cobra.Command{
 		if dep != "" {
 			m.AddDependency(id, graph.TaskID(dep))
 		}
-		m.SetStartTime(id, parse(start))
-		m.SetEndTime(id, parse(end))
+		etime := parse(end)
+		err = m.SetEndTime(id, etime)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to set time to %v: %v\n", etime, err)
+			return
+		}
+		stime := parse(start)
+		err = m.SetStartTime(id, stime)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to set start time to %v: %v\n", stime, err)
+			return
+		}
 		// m.SetDescription(id, args[0])
 		// m.SetRunCmd(id, runcmd)
 		// m.SetWeight(id, weight)
@@ -80,6 +91,7 @@ var addCommand = &cobra.Command{
 		if class != "" {
 			// TODO: Implement classes
 		}
+
 	},
 }
 
@@ -98,35 +110,36 @@ var modifyCommand = &cobra.Command{
 		ids := []graph.TaskID{graph.TaskID(ref)} // When we have aliases and classes, resolve ref.
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to modify %v: %v\n", ref, err)
-		} else {
-			for _, id := range ids {
-				if alias != "" {
-					// TODO: Implement aliases
-				}
+			return
+		}
+		defer cleanupCall(m)
+		for _, id := range ids {
+			if alias != "" {
+				// TODO: Implement aliases
+			}
 
-				if class != "" {
-					// TODO: Implement classes
-				}
+			if class != "" {
+				// TODO: Implement classes
+			}
 
-				if dep != "" {
-					err = m.AddDependency(id, graph.TaskID(dep))
-				}
+			if dep != "" {
+				err = m.AddDependency(id, graph.TaskID(dep))
+			}
 
-				if end != DATE_END {
-					m.SetEndTime(id, parse(end))
-				}
+			if end != DATE_END {
+				m.SetEndTime(id, parse(end))
+			}
 
-				if start != DATE_START {
-					m.SetStartTime(id, parse(start))
-				}
+			if start != DATE_START {
+				m.SetStartTime(id, parse(start))
+			}
 
-				if runcmd != "" {
-					// TODO: Implement
-				}
+			if runcmd != "" {
+				// TODO: Implement
+			}
 
-				if weight != 1 {
-					// TODO: Implement
-				}
+			if weight != 1 {
+				// TODO: Implement
 			}
 		}
 	},
@@ -149,11 +162,12 @@ var runCommand = &cobra.Command{
 		if background {
 			// TODO: daemonize
 		}
-		_, err := getMiddleman(file, true)
+		m, err := getMiddleman(file, true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to acquire resource to get run command: %v", err)
 			return
 		}
+		defer cleanupCall(m)
 		// TODO: Uncomment below when we have run commands
 		// ref := args[0]
 		// id := graph.TaskID(ref) // When we have aliases and classes, resolve here.
@@ -172,15 +186,20 @@ var showCommand = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Unable to acquire resource: %v", err)
 			return
 		}
+		defer cleanupCall(m)
 		unblocked, err := m.GetUnblocked()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to find unblocked commands: %v", err)
 			return
 		}
 		for i, t := range unblocked {
-			fmt.Printf("\t%v) %v", i, t)
+			fmt.Printf("  %v)\n%v\n", i, pretty("    ", t))
 		}
 	},
+}
+
+func pretty(indent string, t *graph.Task) string {
+	return fmt.Sprintf("%sDescription: %v\n%sStart: %v\n%sEnd: %v\n%sDependencies: %v\n", indent, "No descriptions yet", indent, t.Start, indent, t.End, indent, t.Dependencies)
 }
 
 var editCommand = &cobra.Command{
@@ -188,20 +207,21 @@ var editCommand = &cobra.Command{
 	Short: "Edit one or more tasks' descriptions.",
 	Long:  "Edit one or more tasks' descriptions.",
 	Run: func(cmd *cobra.Command, args []string) {
-		_, err := getMiddleman(file, true)
+		m, err := getMiddleman(file, true)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error acquiring resource to edit description: %v\n", err)
+			return
+		}
+		defer cleanupCall(m)
 		// Get the task that this ref refers to.
 		ref := args[0]
 		id := graph.TaskID(ref) // When we have aliases and classes, resolve here.
-		// Check for issue (e.g., ref was class)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error editing description for %v: %v", id, err)
-		} else {
-			// Let user edit string
-			// Uncomment below once we have descriptions
-			// tmp := shell.EditString(m.GetDescription(id))
-			// Shove back updated string
-			// m.SetDescription(id, tmp)
-		}
+		fmt.Printf("I bet you wish you were editing %v, dontcha?", id)
+		// Let user edit string
+		// Uncomment below once we have descriptions
+		// tmp := shell.EditString(m.GetDescription(id))
+		// Shove back updated string
+		// m.SetDescription(id, tmp)
 	},
 }
 
@@ -216,7 +236,9 @@ var serverCommand = &cobra.Command{
 		m, err := getMiddleman(file, true)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to acquire resource before starting server: %v", err)
+			return
 		}
+		defer cleanupCall(m)
 		server.StartServer(m, port, noRestart)
 	},
 }

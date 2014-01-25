@@ -12,7 +12,7 @@ func Unmarshal(data []byte) (graph.Task, error) {
 }
 
 func Marshal(t graph.Task) ([]byte, error) {
-	return json.Marshal(FromGraphTask(t))
+	return json.MarshalIndent(FromGraphTask(t), "", " ")
 }
 
 type Task struct {
