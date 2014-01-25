@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/joshlf13/todo/graph"
 	"github.com/joshlf13/todo/server"
-	"github.com/joshlf13/todo/shell"
+	_ "github.com/joshlf13/todo/shell"
 	"github.com/spf13/cobra"
 	"os"
 	"time"
@@ -23,8 +23,6 @@ func parse(d string) time.Time {
 		return t
 	}
 }
-
-var todoList graph.TodoList
 
 var file string
 
@@ -53,15 +51,25 @@ var addCommand = &cobra.Command{
 	Long:  "Add a new task to the graph, specifying its properties (aliases, classes, times, etc.).",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("something (ran add)")
-		deps := []string{dep}
-		// Create task, set attributes and then add deps
-		t := todoList.NewTask()
-		t.SetDescription(args[0])
-		t.SetRunCmd(runcmd)
-		t.SetStartTime(parse(start))
-		t.SetEndTime(parse(end))
-		t.SetWeight(weight)
-		t.AddDependencies(deps)
+        m, err := getMiddleman(file, true)
+        if (err != nil) {
+            fmt.Fprintf(os.Stderr, "Unable to acquire resource to add new task: %v", err)
+            return
+        }
+        t := graph.Task{}
+        id, err := m.AddTask(t)
+        if (err != nil) {
+            fmt.Fprintf(os.Stderr, "Unable to add new task to resource: %v", err)
+            return
+        }
+        if (dep != "") {
+            m.AddDependency(id, graph.TaskID(dep))
+        }
+        m.SetStartTime(id, parse(start))
+        m.SetEndTime(id, parse(end))
+		// m.SetDescription(id, args[0])
+		// m.SetRunCmd(id, runcmd)
+		// m.SetWeight(id, weight)
 
 		// Point `alias' to `taskid' if needed
 		if alias != "" {
@@ -81,45 +89,43 @@ var modifyCommand = &cobra.Command{
 	Long:  "Modify a new task in the graph, changing its properties (aliases, classes, times, etc.).",
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) == 0 {
+            // TODO: Print help message. HOW DO I DO THIS, COBRA?!?!?!
 			return
 		}
 
 		ref := args[0]
-		ts, err := todoList.ResolveAll(ref)
+        m, err := getMiddleman(file, true)
+		ids := []graph.TaskID{ graph.TaskID(ref) } // When we have aliases and classes, resolve ref.
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Unable to modify %v: %v\n", ref, err)
 		} else {
-			deps := []string{dep}
-
-			for _, t := range ts {
-				// Point `alias' to `taskid'
+			for _, id := range ids {
 				if alias != "" {
 					// TODO: Implement aliases
 				}
 
-				// Add tasks
 				if class != "" {
 					// TODO: Implement classes
 				}
 
 				if dep != "" {
-					t.AddDependencies(deps)
+					err = m.AddDependency(id, graph.TaskID(dep))
 				}
 
 				if end != DATE_END {
-					t.SetEndTime(parse(end))
+					m.SetEndTime(id, parse(end))
 				}
 
 				if start != DATE_START {
-					t.SetStartTime(parse(start))
+					m.SetStartTime(id, parse(start))
 				}
 
 				if runcmd != "" {
-					t.SetRunCmd(runcmd)
+                    // TODO: Implement
 				}
 
 				if weight != 1 {
-					t.SetWeight(weight)
+                    // TODO: Implement
 				}
 			}
 		}
@@ -140,8 +146,18 @@ var runCommand = &cobra.Command{
 	Short: "Run a task's command.",
 	Long:  "Run a task's command. Can be run forked to run in the background if desired.",
 	Run: func(cmd *cobra.Command, args []string) {
-		t, _ := todoList.ResolveSingle(args[0])
-		shell.RunCommand(t.GetTaskID(), t.GetRunCmd(), background)
+        if (background) {
+            // TODO: daemonize
+        }
+        _, err := getMiddleman(file, true)
+        if (err != nil) {
+            fmt.Fprintf(os.Stderr, "Unable to acquire resource to get run command: %v", err)
+            return
+        }
+        // TODO: Uncomment below when we have run commands
+        // ref := args[0]
+        // id := graph.TaskID(ref) // When we have aliases and classes, resolve here.
+		// shell.RunCommand(id, m.GetRunCmd(id), background)
 	},
 }
 
@@ -151,9 +167,17 @@ var showCommand = &cobra.Command{
 	Long:  "Show all tasks that match the query. By default the command will just shows unblocked tasks, but this can be changed.",
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("Uncompleted tasks:")
-		// TODO tl needs to be the "Tasks" object
-		uncompleted := tl.Uncompleted()
-		for i, t := range uncompleted {
+        m, err := getMiddleman(file, true)
+        if (err != nil) {
+            fmt.Fprintf(os.Stderr, "Unable to acquire resource: %v", err)
+            return
+        }
+		unblocked, err := m.GetUnblocked()
+        if (err != nil) {
+            fmt.Fprintf(os.Stderr, "Unable to find unblocked commands: %v", err)
+            return
+        }
+		for i, t := range unblocked {
 			fmt.Printf("\t%v) %v", i, t)
 		}
 	},
@@ -164,16 +188,19 @@ var editCommand = &cobra.Command{
 	Short: "Edit one or more tasks' descriptions.",
 	Long:  "Edit one or more tasks' descriptions.",
 	Run: func(cmd *cobra.Command, args []string) {
+        _, err := getMiddleman(file, true)
 		// Get the task that this ref refers to.
-		t, err := todoList.ResolveSingle(args[0])
+        ref := args[0]
+        id := graph.TaskID(ref) // When we have aliases and classes, resolve here.
 		// Check for issue (e.g., ref was class)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Error editing description: %v", err)
+			fmt.Fprintf(os.Stderr, "Error editing description for %v: %v", id, err)
 		} else {
 			// Let user edit string
-			tmp := shell.EditString(t.GetDescription())
+            // Uncomment below once we have descriptions
+			// tmp := shell.EditString(m.GetDescription(id))
 			// Shove back updated string
-			t.SetDescription(tmp)
+			// m.SetDescription(id, tmp)
 		}
 	},
 }
@@ -183,7 +210,14 @@ var serverCommand = &cobra.Command{
 	Short: "Start a todo server.",
 	Long:  "Start a todo server that provides a web navigable interface and an API to allow you to view and potentially modify your tasks.",
 	Run: func(cmd *cobra.Command, args []string) {
-		server.StartServer(todoList, port, noRestart)
+        if (background) {
+            // TODO: daemonize
+        }
+        m, err := getMiddleman(file, true)
+        if (err != nil) {
+            fmt.Fprintf(os.Stderr, "Unable to acquire resource before starting server: %v", err)
+        }
+		server.StartServer(m, port, noRestart)
 	},
 }
 
