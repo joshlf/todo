@@ -1,20 +1,56 @@
 package todo
 
 import (
+	"fmt"
 	"math"
 	"time"
 )
 
 type TaskID string
 
+type Dependencies map[TaskID]struct{}
+
+func (d Dependencies) String() string {
+	if len(d) == 0 {
+		return "[]"
+	}
+	s := "["
+	for t := range d {
+		s += string(t) + " "
+	}
+	b := []byte(s)
+	b[len(b)-1] = ']'
+	return string(b)
+}
+
 type Task struct {
 	Id           TaskID
-	End, Start   uint64
+	Start, End   uint64
 	Completed    bool
-	Dependencies map[TaskID]struct{}
+	Dependencies Dependencies
+}
+
+func (t *Task) String() string {
+	return fmt.Sprintf("{Id:%s Start:%d End:%d Completed:%v Dependencies:%v}", t.Id, t.Start, t.End, t.Completed, t.Dependencies)
 }
 
 type Tasks map[TaskID]*Task
+
+func (t Tasks) String() string {
+	if len(t) == 0 {
+		return "{}"
+	}
+	fmtStr := "["
+	args := make([]interface{}, 0)
+	for _, task := range t {
+		args = append(args, task.String())
+		fmtStr += "%v\n"
+	}
+	b := []byte(fmtStr)
+	b[len(b)-1] = ']'
+	fmtStr = string(b)
+	return fmt.Sprintf(fmtStr, args...)
+}
 
 type TodoList struct {
 	Tasks
