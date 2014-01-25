@@ -1,9 +1,9 @@
-package main
+package todo
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
-    "fmt"
-    "math"
+	"math"
 )
 
 var File string
@@ -12,7 +12,7 @@ var TodoCommand = &cobra.Command{
 	Short: "A todo list manager with some more interesting features.",
 	Long:  "A todo list manager that allows for dependencies, start and end times, executing commands and more.",
 	Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println("dsafdsfsadf")
+		fmt.Println("dsafdsfsadf")
 	},
 }
 
@@ -24,7 +24,6 @@ var addCommand = &cobra.Command{
 
 	},
 }
-
 
 var modifyCommand = &cobra.Command{
 	Use:   "modify ref",
@@ -58,10 +57,10 @@ var showCommand = &cobra.Command{
 	Short: "Show all unblocked tasks.",
 	Long:  "Show all tasks that match the query. By default the command will just shows unblocked tasks, but this can be changed.",
 	Run: func(cmd *cobra.Command, args []string) {
-        fmt.Println("About to show")
-        for _, arg := range args {
-            fmt.Printf("Showing: %s\n", arg)
-        }
+		fmt.Println("About to show")
+		for _, arg := range args {
+			fmt.Printf("Showing: %s\n", arg)
+		}
 	},
 }
 
@@ -115,23 +114,23 @@ var port int
 var noRestart, readonly bool
 
 func init() {
-    for _, cmd := range []*cobra.Command { addCommand, modifyCommand } {
-        cmd.Flags().StringVarP(&alias, "alias", "a", "", "Create an alias that references this task.")
-        cmd.Flags().StringVarP(&class, "class", "c", "", "Place this alias within a class.")
-        cmd.Flags().StringVarP(&runcmd, "run", "r", "", "Run a command when doing this task.")
-        cmd.Flags().StringVarP(&dep, "dep", "d", "", "Add a dependency for this task.")
-        cmd.Flags().IntVarP(&weight, "weight", "w", 1, "Assign this task a weight.")
-        cmd.Flags().IntVarP(&start, "start", "s", 0, "Start time for this task.")
-        cmd.Flags().IntVarP(&end, "end", "e", math.MaxInt64, "End time for this task.")
-    }
+	for _, cmd := range []*cobra.Command{addCommand, modifyCommand} {
+		cmd.Flags().StringVarP(&alias, "alias", "a", "", "Create an alias that references this task.")
+		cmd.Flags().StringVarP(&class, "class", "c", "", "Place this alias within a class.")
+		cmd.Flags().StringVarP(&runcmd, "run", "r", "", "Run a command when doing this task.")
+		cmd.Flags().StringVarP(&dep, "dep", "d", "", "Add a dependency for this task.")
+		cmd.Flags().IntVarP(&weight, "weight", "w", 1, "Assign this task a weight.")
+		cmd.Flags().IntVarP(&start, "start", "s", 0, "Start time for this task.")
+		cmd.Flags().IntVarP(&end, "end", "e", math.MaxInt64, "End time for this task.")
+	}
 
-    finishCommand.Flags().BoolVarP(&obliterate, "obliterate", "o", false, "Delete this task instead of just marking it completed.")
-    finishCommand.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively finish this task and its dependencies.")
-    finishCommand.Flags().BoolVarP(&requireDeps, "require-deps", "d", false, "Disallow marking this task finished until all of its dependencies are finished.")
+	finishCommand.Flags().BoolVarP(&obliterate, "obliterate", "o", false, "Delete this task instead of just marking it completed.")
+	finishCommand.Flags().BoolVarP(&recursive, "recursive", "r", false, "Recursively finish this task and its dependencies.")
+	finishCommand.Flags().BoolVarP(&requireDeps, "require-deps", "d", false, "Disallow marking this task finished until all of its dependencies are finished.")
 
-    runCommand.Flags().BoolVarP(&background, "background", "b", false, "Fork to the background.")
+	runCommand.Flags().BoolVarP(&background, "background", "b", false, "Fork to the background.")
 
-    serverCommand.Flags().IntVarP(&port, "port", "p", 8080, "Port the server should use.")
-    serverCommand.Flags().BoolVarP(&noRestart, "no-restart", "n", false, "Stop the server from restarting when the JSON file changes. (Only applies when running read-only.)")
-    serverCommand.Flags().BoolVarP(&readonly, "readonly", "r", false, "Prevent anyone from modifying the todo graph over HTTP.")
+	serverCommand.Flags().IntVarP(&port, "port", "p", 8080, "Port the server should use.")
+	serverCommand.Flags().BoolVarP(&noRestart, "no-restart", "n", false, "Stop the server from restarting when the JSON file changes. (Only applies when running read-only.)")
+	serverCommand.Flags().BoolVarP(&readonly, "readonly", "r", false, "Prevent anyone from modifying the todo graph over HTTP.")
 }
