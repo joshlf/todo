@@ -20,20 +20,26 @@ type TodoList struct {
 	Tasks
 }
 
+func (l TodoList) ResolveAll(ref string) ([]Task, error) {
+	ts := []Task{}
+	// TODO: Implement
+	return ts, nil
+}
+
 func (l TodoList) ResolveSingle(ref string) (Task, error) {
-    var t Task
-    // TODO: Implement
-    return t, nil
+	var t Task
+	// TODO: Implement
+	return t, nil
 }
 
 func (l TodoList) NewTask() Task {
-    var t Task
-    // TODO: place into Dependencies
-    return t
+	var t Task
+	// TODO: place into Dependencies
+	return t
 }
 
 func (t *Task) GetTaskID() string {
-    return ""
+	return ""
 }
 
 func (t *Task) StartTime() time.Time {
@@ -61,27 +67,27 @@ func (t *Task) SetEndTime(tm time.Time) {
 }
 
 func (t *Task) GetDescription() string {
-    // TODO: Implement description
-    return ""
+	// TODO: Implement description
+	return ""
 }
 
 func (t *Task) SetDescription(desc string) {
-    // TODO: Implement description
+	// TODO: Implement description
 }
 
 func (t *Task) SetWeight(w int) {
-    // TODO: Implement weights
+	// TODO: Implement weights
 }
 
 func (t *Task) GetRunCmd() string {
-    // TODO: Implement run command
-    return ""
+	// TODO: Implement run command
+	return ""
 }
 
 func (t *Task) SetRunCmd(cmd string) {
-    // TODO: Implement run command
+	// TODO: Implement run command
 }
 
 func (t *Task) AddDependencies(deps []string) {
-    // TODO: Do this.
+	// TODO: Do this.
 }

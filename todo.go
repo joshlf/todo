@@ -7,21 +7,21 @@ import (
 	"github.com/joshlf13/todo/shell"
 	"github.com/spf13/cobra"
 	"os"
-    "time"
+	"time"
 )
 
 const (
-    DATE_END = "00:00:00 1/1/2040"
-    DATE_START = "00:00:00 1/1/1970"
+	DATE_END   = "00:00:00 1/1/2040"
+	DATE_START = "00:00:00 1/1/1970"
 )
 
 func parse(d string) time.Time {
-    t, err := time.Parse("15:04:05 1/2/2006", d)
-    if (err != nil) {
-        panic("Fix me!")
-    } else {
-        return t
-    }
+	t, err := time.Parse("15:04:05 1/2/2006", d)
+	if err != nil {
+		panic("Fix me!")
+	} else {
+		return t
+	}
 }
 
 var todoList graph.TodoList
@@ -80,35 +80,49 @@ var modifyCommand = &cobra.Command{
 	Short: "Modify a new task in the graph.",
 	Long:  "Modify a new task in the graph, changing its properties (aliases, classes, times, etc.).",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Point `alias' to `taskid'
-		if alias != "" {
-
+		if len(args) == 0 {
+			return
 		}
 
-		if class != "" {
+		ref := args[0]
+		ts, err := todoList.ResolveAll(ref)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Unable to modify %v: %v\n", ref, err)
+		} else {
+			deps := []string{dep}
 
+			for _, t := range ts {
+				// Point `alias' to `taskid'
+				if alias != "" {
+					// TODO: Implement aliases
+				}
+
+				// Add tasks
+				if class != "" {
+					// TODO: Implement classes
+				}
+
+				if dep != "" {
+					t.AddDependencies(deps)
+				}
+
+				if end != DATE_END {
+					t.SetEndTime(parse(end))
+				}
+
+				if start != DATE_START {
+					t.SetStartTime(parse(start))
+				}
+
+				if runcmd != "" {
+					t.SetRunCmd(runcmd)
+				}
+
+				if weight != 1 {
+					t.SetWeight(weight)
+				}
+			}
 		}
-
-		if dep != "" {
-
-		}
-
-		if end != DATE_END {
-
-		}
-
-		if runcmd != "" {
-
-		}
-
-		if start != DATE_START {
-
-		}
-
-		if weight != 1 {
-
-		}
-
 	},
 }
 
@@ -177,7 +191,7 @@ var optionCommand = &cobra.Command{
 	Short: "Set an option for your todo graph.",
 	Long:  "Set an option for your todo graph, affecting future behaviour of todo commands.",
 	Run: func(cmd *cobra.Command, args []string) {
-
+		fmt.Println("Options don't work yet. :(")
 	},
 }
 

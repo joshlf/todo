@@ -1,12 +1,10 @@
 package graph
 
 import (
-	"testing"
 	"fmt"
 	"github.com/joshlf13/todo/tests"
 //	_"github.com/joshlf13/todo/tests/impl"
 )
-
 
 func TestPageRank1(t *testing.T) {
 	i := tests.MakeTestTasksN(100, 100, 10)

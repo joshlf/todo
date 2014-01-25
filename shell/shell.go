@@ -11,14 +11,14 @@ import (
 
 func RunCommand(taskID string, s string, background bool) {
 	cmd := exec.Command(s)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
 	cmd.Env = append(os.Environ(), fmt.Sprintf("TASK_ID=%v", taskID))
 	var err error
 	if background {
 		// TODO: Implement
 	} else {
+		cmd.Stdin = os.Stdin
+		cmd.Stdout = os.Stdout
+		cmd.Stderr = os.Stderr
 		if err = cmd.Run(); err != nil {
 			panic(fmt.Sprintf("todo: EditString: failed to launch editor: %v", err))
 			// TODO change this later
