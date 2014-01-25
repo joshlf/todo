@@ -78,7 +78,7 @@ var addCommand = &cobra.Command{
 			fmt.Fprintf(os.Stderr, "Unable to set start time to %v: %v\n", stime, err)
 			return
 		}
-		// m.SetDescription(id, args[0])
+		m.SetDescription(id, args[0])
 		// m.SetRunCmd(id, runcmd)
 		// m.SetWeight(id, weight)
 
