@@ -84,7 +84,7 @@ func (l Local) GetUnblockedDependencies(id graph.TaskID) (graph.Tasks, error) {
 	return l.tasks.DependencyTree(id).Unblocked().Uncompleted().PruneDependencies(), nil
 }
 
-func (l Local) MarkCompleted(id graph.TaskID) error {
+func (l Local) MarkCompleted(id graph.TaskID, obliterate bool) error {
 	task, ok := l.tasks[id]
 	if !ok {
 		return newInvalidRefError(id)
@@ -94,7 +94,7 @@ func (l Local) MarkCompleted(id graph.TaskID) error {
 }
 
 // Only mark completed if all dependencies are completed
-func (l Local) MarkCompletedVerify(id graph.TaskID) (bool, error) {
+func (l Local) MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, error) {
 	task, ok := l.tasks[id]
 	if !ok {
 		return false, newInvalidRefError(id)
@@ -110,7 +110,7 @@ func (l Local) MarkCompletedVerify(id graph.TaskID) (bool, error) {
 
 // Mark completed and force mark all dependencies
 // as completed recursively
-func (l Local) MarkCompletedRecursive(id graph.TaskID) error {
+func (l Local) MarkCompletedRecursive(id graph.TaskID, obliterate bool) error {
 	task, ok := l.tasks[id]
 	if !ok {
 		return newInvalidRefError(id)

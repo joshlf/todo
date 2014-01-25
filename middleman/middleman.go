@@ -40,7 +40,7 @@ type Middleman interface {
 	// Get all tasks which are dependencies of id,
 	// and are both unblocked and uncompleted
 	GetUnblockedDependencies(id graph.TaskID) (graph.Tasks, error)
-	MarkCompleted(id graph.TaskID) error
-	MarkCompletedVerify(id graph.TaskID) (bool, error)
-	MarkCompletedRecursive(id graph.TaskID) error
+	MarkCompleted(id graph.TaskID, obliterate bool) error
+	MarkCompletedVerify(id graph.TaskID, obliterate bool) (bool, error)
+	MarkCompletedRecursive(id graph.TaskID, obliterate bool) error
 }
