@@ -15,7 +15,7 @@ func TestPageRank1(t *testing.T) {
 }
 
 func BenchmarkPageRank1(b *testing.B) {
-	g := tests.MakeTestTasksN(200, 200, 10).(graph.Tasks)
+	g := tests.MakeTestTasksN(b.N, 200, 10).(graph.Tasks)
 	b.ResetTimer()
 	graph.PageRank1(g)
 }
